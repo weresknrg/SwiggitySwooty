@@ -1,19 +1,23 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+//#include "level.h"
+
 
 class Entity
 {
 public:
-
-	sf::String File;
-	sf::Image image;
+	float width, height;
+	//sf::Image image;
 	sf::Texture texture;
 	sf::Sprite sprite;
-
-	Entity();
+	sf::String name;
+	Entity(sf::Image &image, float X, float Y, sf::String Name);
 	~Entity();
+	//sf::FloatRect getRect();
 };
+
+
 
 /*
 #define SCALE 0.5

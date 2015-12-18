@@ -1,13 +1,15 @@
 #pragma once
 #include "Entity.h"
+//#include "level.h"
 
 class Player :
 	public Entity
 {
 public:
-	float width, height;
+	
 	sf::Vector2f position;
 	sf::Vector2f speedVec;
+	
 	float steer, speed = 0;
 	float carMaxSpeed = 200;
 	const float mass = 1596;
@@ -21,8 +23,7 @@ public:
 	
 	//const float driveSens = 2;
 
-	Player(sf::String F);
-	~Player();
+	Player(sf::Image &image, float X, float Y, sf::String Name);
 	void update(float dt);
 	void driving(float dt);
 	template <typename T> int sgn(T val);

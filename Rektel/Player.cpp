@@ -1,27 +1,17 @@
+#pragma once
 #include "Player.h"
 #include <iostream> 
 #include <math.h>
 
-#define SCALE 0.25
+#define SCALE 0.76
 
-Player::Player(sf::String F)
-{
-	File = F;
-	image.loadFromFile("images/" + File);
-	image.createMaskFromColor(sf::Color(255, 255, 255));
-	texture.loadFromImage(image);
+Player::Player(sf::Image &image, float X, float Y, sf::String Name) :Entity(image, X, Y, Name) {
 	
-	sprite.setTexture(texture);
+	steer = 0;
+	sprite.setScale(SCALE, SCALE);
 	width = texture.getSize().x;
 	height = texture.getSize().y;
-	sprite.setOrigin(width/2, height/2);
-	sprite.setScale(SCALE, SCALE);
-
-	position.x = 500;
-	position.y = 500;
-	steer = 0;
-
-	sprite.setPosition(position);
+	sprite.setOrigin(width / 2, height / 2);
 	
 }
 
@@ -30,9 +20,9 @@ void Player::update(float dt) {
 	float forceFrict;
 	float forceResist;
 	float totalForce;
-	//speed = (speed);
+
 	speedVec = Pixels2Meter(speed) * sf::Vector2f(sinf(sprite.getRotation()* 3.14159265f / 180.0f), cosf( sprite.getRotation() * 3.14159265f / 180.0f));
-	
+	rotationAngle += steer;
 	forceFrict = -10.5f  * speed;
 	forceResist = -2.3f  * sgn(speed) * speed;
 	if (breaking) {
@@ -48,11 +38,7 @@ void Player::update(float dt) {
 
 	speed += acceleration * dt; 
 	sprite.move(Meter2Pixels( speedVec.x), Meter2Pixels(-speedVec.y));
-	sprite.rotate(steer);
-}
-
-Player::~Player()
-{
+	sprite.setRotation(rotationAngle);
 }
 
 void Player::driving(float dt) //”правление
