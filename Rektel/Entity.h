@@ -1,14 +1,13 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-//#include "level.h"
+#include "level.h"
 
 
 class Entity
 {
 public:
 	float width, height;
-	//sf::Image image;
 	sf::Texture texture;
 	sf::Sprite sprite;
 	sf::String name;

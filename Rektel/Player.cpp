@@ -3,7 +3,7 @@
 #include <iostream> 
 #include <math.h>
 
-#define SCALE 0.76
+#define SCALE 0.6
 
 Player::Player(sf::Image &image, float X, float Y, sf::String Name) :Entity(image, X, Y, Name) {
 	
@@ -93,7 +93,7 @@ void Player::driving(float dt) //”правление
 		if (abs(steer) < 0.05) 
 			steer = 0;
 		else
-			steer = steer - 1.2 * dt * sgn(steer);
+			steer = steer - 2 * dt * sgn(steer);
 	}
 }
 

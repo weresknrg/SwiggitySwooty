@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="TinyXML">
-      <UniqueIdentifier>{69416768-2546-4518-85d1-8bc78b5a67f5}</UniqueIdentifier>
+      <UniqueIdentifier>{0b2fd134-c640-480e-998a-9399d6e26bce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,9 +27,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TinyXML\tinyxml.cpp">
-      <Filter>TinyXML</Filter>
-    </ClCompile>
     <ClCompile Include="TinyXML\tinyxmlerror.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
@@ -39,6 +36,12 @@
     <ClCompile Include="TinyXML\tinystr.cpp">
       <Filter>TinyXML</Filter>
     </ClCompile>
+    <ClCompile Include="TinyXML\tinyxml.cpp">
+      <Filter>TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.h">
@@ -47,14 +50,14 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="TinyXML\tinyxml.h">
       <Filter>TinyXML</Filter>
     </ClInclude>
     <ClInclude Include="TinyXML\tinystr.h">
       <Filter>TinyXML</Filter>
-    </ClInclude>
-    <ClInclude Include="level.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
