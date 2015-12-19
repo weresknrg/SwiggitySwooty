@@ -6,22 +6,25 @@
 #include <vector>
 #include <list>
 #include "level.h"
+#include "Camera.h"
 
 
 int main()
 {
-	sf::View camera;
 	sf::RenderWindow window(sf::VideoMode(1280, 800), "rektel");
 	sf::Clock clock;
 	sf::Time accumulator = sf::Time::Zero;
 	sf::Time ups = sf::seconds(1.f / 60.f);
 	
+	Level map;
+	map.LoadFromFile("levels/lev1.tmx");
+	
 	sf::Image heroImage;
 	heroImage.loadFromFile("images/car_tex.png");
-	Player p(heroImage, 300, 300, "player");
-	Level map;
+	
+	Object player = map.GetObject("player");
+	Player p(heroImage, map, player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2, "player");
 
-	map.LoadFromFile("levels/lev1.tmx");
 
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
 
@@ -39,12 +42,10 @@ int main()
 			accumulator -= ups;
 			p.update(ups.asSeconds());
 			window.setView(camera);
-			camera.setCenter(p.sprite.getPosition());
-			//AI();
-			//Physics();
+			setCameraPosition(p.getPosition().x, p.getPosition().y);
 		}
 		map.Draw(window);
-		window.draw(p.sprite);
+		p.draw(window);
 		window.display();
 		window.clear();
 		accumulator += clock.restart();

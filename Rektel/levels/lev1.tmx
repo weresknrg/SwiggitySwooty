@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-up" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="30">
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="32">
  <tileset firstgid="1" name="spriteSheet2" tilewidth="32" tileheight="32" tilecount="240">
-  <image source="D:/Studiorum/git/Rektel/Rektel/images/spriteSheet2.png" width="515" height="481"/>
+  <image source="D:\Studiorum\git\Rektel\Rektel\images\spriteSheet2.png" width="515" height="481"/>
  </tileset>
  <layer name="roadsSidewalks" width="100" height="100">
   <data>
@@ -10008,81 +10008,23 @@
   </data>
  </layer>
  <objectgroup color="#744d2c" name="buildings">
-  <object id="2" x="1" y="1147" width="580" height="393"/>
-  <object id="3" x="0" y="571" width="579" height="520">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="4" x="1" y="0" width="578" height="195">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="5" x="956" y="1" width="519" height="195">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="8" x="1530" y="2" width="1066" height="193">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="9" x="2684" y="1" width="601" height="196">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="10" x="2621" y="571" width="607" height="458">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="11" x="2619" y="1080" width="648" height="464">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="14" x="957" y="1911" width="775" height="300">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="16" x="1791" y="1914" width="453" height="298">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="17" x="1757" y="2297" width="486" height="619">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="20" x="954.5" y="569.5" width="584.5" height="332.5">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="21" x="1624" y="570" width="621" height="428">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="22" x="955.5" y="983" width="403" height="556">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="23" x="1783" y="1151" width="460" height="388">
-   <properties>
-    <property name="name" value="solid"/>
-   </properties>
-  </object>
-  <object id="27" x="193" y="2176" width="383" height="286"/>
-  <object id="29" x="0" y="1951" width="352" height="193"/>
- </objectgroup>
- <objectgroup name="player">
-  <object id="24" x="1108" y="2949" width="51" height="112"/>
+  <object id="2" name="solid" x="1" y="1152" width="575" height="382"/>
+  <object id="3" name="solid" x="0" y="575" width="575" height="512"/>
+  <object id="4" name="solid" x="1" y="0" width="575" height="191"/>
+  <object id="5" name="solid" x="960" y="1" width="512" height="190"/>
+  <object id="8" name="solid" x="1536" y="2" width="1060" height="189"/>
+  <object id="9" name="solid" x="2689" y="1" width="596" height="190"/>
+  <object id="10" name="solid" x="2624" y="575" width="604" height="448"/>
+  <object id="11" name="solid" x="2625" y="1088" width="642" height="448"/>
+  <object id="14" name="solid" x="959" y="1920" width="767" height="287"/>
+  <object id="16" name="solid" x="1791" y="1918" width="448" height="290"/>
+  <object id="17" name="solid" x="1759" y="2304" width="481" height="607"/>
+  <object id="20" name="solid" x="960" y="574" width="574" height="321"/>
+  <object id="21" name="solid" x="1632" y="576" width="608" height="415"/>
+  <object id="22" name="solid" x="961" y="991" width="383" height="543"/>
+  <object id="23" name="solid" x="1793" y="1151" width="446" height="383"/>
+  <object id="27" name="solid" x="193" y="2176" width="383" height="286"/>
+  <object id="29" name="solid" x="0" y="1951" width="352" height="193"/>
+  <object id="30" name="player" x="1093" y="2956" width="53" height="108"/>
  </objectgroup>
 </map>

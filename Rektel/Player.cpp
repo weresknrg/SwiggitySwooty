@@ -5,14 +5,15 @@
 
 #define SCALE 0.6
 
-Player::Player(sf::Image &image, float X, float Y, sf::String Name) :Entity(image, X, Y, Name) {
-	
+Player::Player(sf::Image &image, Level &lev, float X, float Y, sf::String Name) :Entity(image, X, Y, Name) {
+	obj = lev.GetAllObjects();
 	steer = 0;
+	position.x = X;
+	position.y = Y;
 	sprite.setScale(SCALE, SCALE);
 	width = texture.getSize().x;
 	height = texture.getSize().y;
 	sprite.setOrigin(width / 2, height / 2);
-	
 }
 
 void Player::update(float dt) {
@@ -36,8 +37,10 @@ void Player::update(float dt) {
 	acceleration = totalForce / mass;
 
 
-	speed += acceleration * dt; 
-	sprite.move(Meter2Pixels( speedVec.x), Meter2Pixels(-speedVec.y));
+	speed += acceleration * dt;
+	position.x += Meter2Pixels(speedVec.x);
+	position.y -= Meter2Pixels(speedVec.y);
+	sprite.setPosition(position);
 	sprite.setRotation(rotationAngle);
 }
 
@@ -101,10 +104,6 @@ template <typename T> int Player::sgn(T val) {
 	return (T(0) < val) - (val < T(0));
 }
 
-float Player::vecLength(sf::Vector2f vec) {
-	return sqrtf(vec.x * vec.x + vec.y * vec.y);
-}
-
 inline const float Player::Meter2Pixels(float meters)
 {
 	return meters * PixelsPerMeter;
@@ -113,4 +112,14 @@ inline const float Player::Meter2Pixels(float meters)
 inline const float Player::Pixels2Meter(float pixels)
 {
 	return pixels / PixelsPerMeter;
+}
+
+sf::Vector2f Player::getPosition()
+{
+	return sf::Vector2f(position.x, position.y);
+}
+
+void Player::draw(sf::RenderTarget &window)
+{
+	window.draw(sprite);
 }
