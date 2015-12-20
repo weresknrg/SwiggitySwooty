@@ -6,7 +6,6 @@ class Player :
 	public Entity
 {
 private:
-	sf::Vector2f position;
 	sf::Vector2f speedVec;
 	
 	float steer, speed;
@@ -20,6 +19,7 @@ private:
 	float acceleration;
 	const float PixelsPerMeter = 18;
 	void driving(float dt);
+	void collisionWithMap();
 
 	template <typename T> int sgn(T val);
 	inline const float Meter2Pixels(float meters);

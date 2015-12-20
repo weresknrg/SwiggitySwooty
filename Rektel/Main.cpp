@@ -8,10 +8,10 @@
 #include "level.h"
 #include "Camera.h"
 
-
+sf::RenderWindow window(sf::VideoMode(1280, 800), "rektel");
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1280, 800), "rektel");
+	
 	sf::Clock clock;
 	sf::Time accumulator = sf::Time::Zero;
 	sf::Time ups = sf::seconds(1.f / 60.f);
@@ -25,7 +25,7 @@ int main()
 	Object player = map.GetObject("player");
 	Player p(heroImage, map, player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2, "player");
 
-
+	
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
 
 	while (window.isOpen())

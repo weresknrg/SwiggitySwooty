@@ -7,8 +7,11 @@
 class Entity
 {
 protected:
-	std::vector<Object> obj;
+	std::vector<Object> objVector;
+	std::vector<Object>::const_iterator ObjIter;
 	float width, height;
+	sf::RectangleShape rect;
+	sf::Vector2f position;
 	sf::Texture texture;
 	sf::Sprite sprite;
 	sf::String name;
