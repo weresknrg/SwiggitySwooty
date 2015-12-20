@@ -3,14 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 
-class SAT {
+class Collision {
 public:
-	bool checkCollision(sf::Sprite &s1, sf::FloatRect &s2);
+	static bool checkCollision(sf::Sprite &s1, sf::FloatRect &s2);
 private:
-    void  SAT::project(sf::Vector2f& axis, sf::VertexArray &_rectangle, float &min, float &max);
-    void normalize(sf::Vector2f& vector);
-    float dot(sf::Vector2f& vector1, sf::Vector2f& vector2);
-    float SAT::distance(float minA, float maxA, float minB, float maxB) ;
+    static void project(sf::Vector2f& axis, sf::VertexArray &_rectangle, float &min, float &max);
+    static void normalize(sf::Vector2f& vector);
+    static float dot(sf::Vector2f& vector1, sf::Vector2f& vector2);
+    static float distance(float minA, float maxA, float minB, float maxB) ;
 };
 
 

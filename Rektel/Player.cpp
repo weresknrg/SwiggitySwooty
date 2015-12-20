@@ -2,20 +2,18 @@
 #include "Player.h"
 #include <iostream> 
 #include <math.h>
-#include  "Collision.h"
-
-
+#include "Collision.h"
 #define SCALE 0.6
 
 Player::Player(sf::Image &image, Level &lev, float X, float Y, sf::String Name) :Entity(image, X, Y, Name) {
-	objVector = lev.GetAllObjects();
+	mapObjects = lev.GetAllObjects();
 	steer = 0;
 	position.x = X;
 	position.y = Y;
 	sprite.setScale(SCALE, SCALE);
 	width = texture.getSize().x;
 	height = texture.getSize().y;
-	sprite.setOrigin(width / 2, height / 2);
+	sprite.setOrigin(width / 2, height*3/4);
 	rect.setSize((sf::Vector2f) texture.getSize());
 	rect.setScale(sprite.getScale());
 	rect.setOrigin(sprite.getOrigin());
@@ -33,16 +31,23 @@ void Player::update(float dt) {
 
 	speedVec = Pixels2Meter(speed) * sf::Vector2f(sinf(rotationAngle* 3.14159265f / 180.0f), cosf( rotationAngle * 3.14159265f / 180.0f));
 	rotationAngle += steer;
-	forceFrict = -10.5f  * speed;
-	forceResist = -112.3f  * sgn(speed) * speed;
+	forceFrict = -100.5f  * speed;
+	forceResist = -3.3f  * sgn(speed) * speed;
+	
 	if (breaking) {
-		totalForce = -breakForce + forceFrict + forceResist;
+		totalForce = -sgn(speed) * breakForce + forceFrict + forceResist;
+
+	}
+	else if (reverce) {
+		totalForce = -backward + forceFrict + forceResist;
 	}
 	else {
 		totalForce = engineForce + forceFrict + forceResist;
 	}
+	
 	//std::cout << "w " << rect.getSize().x << "\t h \t " << height*SCALE << std::endl;
 	//std::cout << "acc " << acceleration <<"\t speed \t "<< speed <<"\t frc \t"<< totalForce <<std::endl;
+	
 	acceleration = totalForce / mass;
 	collisionWithMap();
 
@@ -57,7 +62,7 @@ void Player::driving(float dt) //Управление
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) //Газ
 	{
-		engineForce+= 0.1/dt;
+		engineForce+= 0.7/dt;
 		if (engineForce > 1000)
 		{
 			engineForce = 1000;
@@ -72,15 +77,24 @@ void Player::driving(float dt) //Управление
 		}
 	}
 	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) //Тормоз
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) //Тормоз
 	{
-		breakForce +=  0.7/ dt;
+		breakForce +=  0.8/ dt;
 		breaking = 1;
-		if (speed < 0)
-			breakForce = 0;
 	}
 	else {
 		breaking = 0;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+		backward += 0.3 / dt;
+		reverce = 1;
+		if (speed < -3) {
+			speed = -3;
+		}
+	}
+	else {
+		reverce = 0;
 	}
 
 	
@@ -109,20 +123,20 @@ void Player::driving(float dt) //Управление
 	}
 }
 
-void Player::collisionWithMap()
+void Player::collisionWithMap() // Обраблтка столкновений с объектами на карте
 {
-	SAT sat;
 	int counter = 0;
-	for (ObjIter = objVector.begin(); ObjIter != objVector.end(); ObjIter++) {
-		if (sat.checkCollision(sprite, objVector[counter].rect)) {
-			if (objVector[counter].name == "solid") {
-				speedVec = -speedVec;
-				speed = -0.4f * speed;
+	for (mapObjectIter = mapObjects.begin(); mapObjectIter != mapObjects.end(); mapObjectIter++) {
+		if (Collision::checkCollision(sprite, mapObjects[counter].rect)) {
+			if (mapObjects[counter].name == "solid") 
+			{ 
+				// вместо этого, сюда написать что нибуть нормальное
+				speedVec = -speedVec; 
+				speed = -0.5 * speed;
 			}
 		}
 		counter++;
 	}
-	
 }
 
 template <typename T> int Player::sgn(T val) {

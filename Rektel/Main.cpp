@@ -42,7 +42,7 @@ int main()
 			accumulator -= ups;
 			p.update(ups.asSeconds());
 			window.setView(camera);
-			setCameraPosition(p.getPosition().x, p.getPosition().y);
+			setUpCamera(p.getPosition().x, p.getPosition().y);
 		}
 		map.Draw(window);
 		p.draw(window);

@@ -7,8 +7,8 @@
 class Entity
 {
 protected:
-	std::vector<Object> objVector;
-	std::vector<Object>::const_iterator ObjIter;
+	std::vector<Object> mapObjects;
+	std::vector<Object>::iterator mapObjectIter;
 	float width, height;
 	sf::RectangleShape rect;
 	sf::Vector2f position;

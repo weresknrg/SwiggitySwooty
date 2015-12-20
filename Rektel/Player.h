@@ -1,6 +1,6 @@
 #pragma once
 #include "Entity.h"
-//#include "level.h"
+
 
 class Player :
 	public Entity
@@ -8,16 +8,17 @@ class Player :
 private:
 	sf::Vector2f speedVec;
 	
-	float steer, speed;
-	float carMaxSpeed;
-	const float mass = 1695;
-	float engineForce;
-	float breakForce;
-	int breaking;
+	float		steer, speed;
+	const float	mass = 1695;
+	float		engineForce, backward;
+	float		breakForce;
+	int			breaking, reverce;
 
-	float rotationAngle;
-	float acceleration;
+	float		rotationAngle;
+	float		acceleration;
 	const float PixelsPerMeter = 18;
+	
+	
 	void driving(float dt);
 	void collisionWithMap();
 
