@@ -5,11 +5,10 @@
 #include "Collision.h"
 #define SCALE 0.6
 
-Player::Player(sf::Image &image, Level &lev, float X, float Y, sf::String Name) :Entity(image, X, Y, Name) {
+Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition, sf::String Name) :Entity(image, startPosition, Name) {
 	mapObjects = lev.GetAllObjects();
 	steer = 0;
-	position.x = X;
-	position.y = Y;
+	position = startPosition;
 	sprite.setScale(SCALE, SCALE);
 	width = texture.getSize().x;
 	height = texture.getSize().y;
@@ -20,7 +19,8 @@ Player::Player(sf::Image &image, Level &lev, float X, float Y, sf::String Name) 
 	rect.setFillColor(sf::Color::Magenta);
 }
 
-void Player::update(float dt) {
+void Player::update(sf::Time dt) 
+{
 	sprite.setPosition(rect.getPosition());
 	sprite.setRotation(rect.getRotation());
 	
@@ -36,7 +36,6 @@ void Player::update(float dt) {
 	
 	if (breaking) {
 		totalForce = -sgn(speed) * breakForce + forceFrict + forceResist;
-
 	}
 	else if (reverce) {
 		totalForce = -backward + forceFrict + forceResist;
@@ -51,18 +50,18 @@ void Player::update(float dt) {
 	acceleration = totalForce / mass;
 	collisionWithMap();
 
-	speed += acceleration * dt;
+	speed += acceleration * dt.asSeconds();
 	position.x += Meter2Pixels(speedVec.x);
 	position.y -= Meter2Pixels(speedVec.y);
 	rect.setPosition(position);
 	rect.setRotation(rotationAngle);
 }
 
-void Player::driving(float dt) //Управление
+void Player::driving(sf::Time dt)  //Управление
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) //Газ
 	{
-		engineForce+= 0.7/dt;
+		engineForce+= 0.7/dt.asSeconds();
 		if (engineForce > 1000)
 		{
 			engineForce = 1000;
@@ -70,7 +69,7 @@ void Player::driving(float dt) //Управление
 	}
 	else
 	{
-		engineForce -= 10/dt;
+		engineForce -= 10/dt.asSeconds();
 		if (engineForce < 0)
 		{
 			engineForce = 0;
@@ -79,7 +78,7 @@ void Player::driving(float dt) //Управление
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) //Тормоз
 	{
-		breakForce +=  0.8/ dt;
+		breakForce +=  0.8/ dt.asSeconds();
 		breaking = 1;
 	}
 	else {
@@ -87,7 +86,7 @@ void Player::driving(float dt) //Управление
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-		backward += 0.3 / dt;
+		backward += 0.3 / dt.asSeconds();
 		reverce = 1;
 		if (speed < -3) {
 			speed = -3;
@@ -100,7 +99,7 @@ void Player::driving(float dt) //Управление
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //Влево
 	{
-		steer -= 0.05/dt *1/sqrt(abs(speed)) ;
+		steer -= 0.05/ dt.asSeconds() *1/sqrt(abs(speed)) ;
 		if (steer < -1.0 )
 		{
 			steer = -1.0 ;
@@ -108,7 +107,7 @@ void Player::driving(float dt) //Управление
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) //Вправо
 	{
-		steer += 0.05/dt * 1/sqrt(abs(speed));
+		steer += 0.05/ dt.asSeconds() * 1/sqrt(abs(speed));
 		if (steer > 1.0)
 		{
 			steer = 1.0;
@@ -119,7 +118,7 @@ void Player::driving(float dt) //Управление
 		if (abs(steer) < 0.05) 
 			steer = 0;
 		else
-			steer = steer - 2 * dt * sgn(steer);
+			steer = steer - 2 * dt.asSeconds() * sgn(steer);
 	}
 }
 

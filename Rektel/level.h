@@ -1,6 +1,5 @@
 #pragma once
-#ifndef LEVEL_H
-#define LEVEL_H
+
 
 #include <string>
 #include <vector>
@@ -49,9 +48,3 @@
 	};
 
 	///////////////////////////////////////
-
-
-
-
-
-#endif

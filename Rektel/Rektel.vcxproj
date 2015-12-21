@@ -152,6 +152,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Citizen.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -163,7 +165,9 @@
     <ClCompile Include="TinyXML\tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Citizen.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="Player.h" />
