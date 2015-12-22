@@ -19,8 +19,8 @@ Citizen::Citizen(sf::Image Image, std::vector<sf::IntRect> &coordForFrames, Leve
 	position = stPos;
 	isAlife = true;
 	speed = 1;
-	//animatedSprite = AnimatedSprite(sf::seconds(0.2), true, false);
-	animatedSprite.setAnimation(walk);
+
+	//animatedSprite.setAnimation(walk);
 	currentAnimation = &walk;
 }
 
