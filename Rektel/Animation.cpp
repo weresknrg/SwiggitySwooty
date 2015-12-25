@@ -29,7 +29,6 @@ const sf::IntRect& Animation::getFrame(std::size_t n) const
 {
 	return m_frames[n];
 }
-
 /////////////////////////////''''''''\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 AnimatedSprite::AnimatedSprite(sf::Time frameTime, bool paused, bool looped) :

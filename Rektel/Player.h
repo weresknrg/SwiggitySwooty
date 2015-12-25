@@ -31,5 +31,8 @@ private:
 	void update(sf::Time dt);
 	sf::Vector2f getPosition();
 	void draw(sf::RenderTarget &renderTarget);
+	sf::FloatRect getRect();
+	sf::Vector2f getSpeedVec();
+	float getRotation();
 };
 

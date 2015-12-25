@@ -9,16 +9,16 @@
 #include "Citizen.h"
 #include "Camera.h"
 
+
 sf::RenderWindow window(sf::VideoMode(1280, 800), "rektel");
 int main()
 {
-	
 	sf::Clock clock;
 	sf::Time accumulator = sf::Time::Zero;
 	sf::Time ups = sf::seconds(1.f / 60.f);
 	
 	Level map;
-	map.LoadFromFile("levels/lev1.tmx");
+	map.LoadFromFile("levels/testMap.tmx");
 	
 	sf::Image heroImage;
 	heroImage.loadFromFile("images/car_tex.png");
@@ -27,23 +27,12 @@ int main()
 	Player p(heroImage, map, sf::Vector2f(player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2), "player");
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
 
-	std::list<Citizen> citizensList;
-	std::list<Citizen>::iterator citizensIter;
-	std::vector<sf::IntRect> coordForAnim;
-	std::vector<sf::Image> animImages;
-
-	sf::Image citizen;
-	citizen.createMaskFromColor(sf::Color(255, 255, 255));
-	citizen.loadFromFile("images/Citizens/1walk.png");
-	animImages.push_back(citizen);
-	coordForAnim.push_back(sf::IntRect(0, 0, 61, 81));
-	coordForAnim.push_back(sf::IntRect(62, 13, 50, 45));
-	coordForAnim.push_back(sf::IntRect(112, 0, 63, 80));
-	coordForAnim.push_back(sf::IntRect(175, 13, 51, 45));
+	std::list<Citizen*> citizensList;
 	
-	citizensList.push_back(Citizen(animImages[0], coordForAnim, map, sf::Vector2f(1000, 2500)));
+	for (int i = 0; i < 100; i++) {
+		citizensList.push_back(new Citizen(map));
+	}
 	
-
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -59,17 +48,28 @@ int main()
 			p.update(ups);
 			window.setView(camera);
 			setUpCamera(p.getPosition().x, p.getPosition().y);
-			for (citizensIter = citizensList.begin(); citizensIter != citizensList.end(); citizensIter++) {
-				citizensIter->update(ups);
+			std::list<Citizen*>::iterator It;
+			for (It = citizensList.begin(); It != citizensList.end();) 
+			{	
+				if ((*It)->checkIsAlife()) {
+					(*It)->update(ups);
+					(*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation());
+					It++;
+				} 
+				else
+				{
+					It = citizensList.erase(It);
+				}
 			}
-		}
-		map.Draw(window);
-		p.draw(window);
-		
-		for (citizensIter = citizensList.begin(); citizensIter != citizensList.end(); citizensIter++) {
-			citizensIter->draw(window);
+
 		}
 
+		map.Draw(window);
+		p.draw(window);
+		for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end(); It++)
+		{
+			(*It)->draw(window);
+		}
 		window.display();
 		window.clear();
 		accumulator += clock.restart();

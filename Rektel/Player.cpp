@@ -16,7 +16,7 @@ Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition, sf::Str
 	rect.setSize((sf::Vector2f) texture.getSize());
 	rect.setScale(sprite.getScale());
 	rect.setOrigin(sprite.getOrigin());
-	rect.setFillColor(sf::Color::Magenta);
+	rect.setFillColor(sf::Color::Green);
 }
 
 void Player::update(sf::Time dt) 
@@ -162,3 +162,17 @@ void Player::draw(sf::RenderTarget &window)
 	window.draw(sprite);
 }
 
+sf::FloatRect Player::getRect() 
+{
+	return rect.getGlobalBounds(); 
+}
+
+sf::Vector2f Player::getSpeedVec()
+{
+	return speedVec;
+}
+
+float Player::getRotation()
+{
+	return rotationAngle;
+}
