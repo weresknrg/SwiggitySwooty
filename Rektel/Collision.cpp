@@ -22,7 +22,6 @@ float Collision::distance(float minA, float maxA, float minB, float maxB) // рас
 	else return minA - maxB;
 }
 
-
 void  Collision::project(sf::Vector2f& axis, sf::VertexArray &_rectangle, float &min, float &max) // проекция одного вектора на другой
 {
 	float tempDOT = dot(axis, _rectangle[0].position);

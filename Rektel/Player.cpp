@@ -62,14 +62,14 @@ void Player::driving(sf::Time dt)  //Управление
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) //Газ
 	{
 		engineForce += 1000 * dt.asSeconds();
-		if (engineForce > 1000)
+		if (engineForce > 1500)
 		{
-			engineForce = 1000;
+			engineForce = 1500;
 		}
 	}
 	else
 	{
-		engineForce -= 10 * dt.asSeconds();
+		engineForce -= 500 * dt.asSeconds();
 		if (engineForce < 0)
 		{
 			engineForce = 0;
@@ -78,7 +78,7 @@ void Player::driving(sf::Time dt)  //Управление
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) //Тормоз
 	{
-		breakForce += 0.8 * dt.asSeconds();
+		breakForce += 2000 * dt.asSeconds();
 		breaking = 1;
 	}
 	else {
@@ -86,7 +86,7 @@ void Player::driving(sf::Time dt)  //Управление
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		backward += 0.3 * dt.asSeconds();
+		backward += 300 * dt.asSeconds();
 		reverce = 1;
 		if (speed < -3) {
 			speed = -3;

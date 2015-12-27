@@ -2,7 +2,14 @@
 #include <SFML\Graphics.hpp>
 
 sf::View camera;
-void setUpCamera(float x, float y) { 
+
+
+auto getVisibleArea()
+{
+	return sf::FloatRect(sf::Vector2f(camera.getCenter().x - camera.getSize().x / 2, camera.getCenter().y - camera.getSize().y / 2), camera.getSize());
+}
+
+void setUpCamera(float x, float y) {
 	float tempX = x; float tempY = y;
 
 	if (x < 640) tempX = 640;	//убираем из вида левую сторону

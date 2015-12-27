@@ -1,12 +1,13 @@
 #include "Citizen.h"
 #include "level.h"
 
-Citizen::Citizen(int type, Level &map, sf::Texture *walking, sf::Texture *dying, sf::Texture *exploding)
+Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, sf::Texture *dying, sf::Texture *exploding)
 {
 	textureWalking = walking;
 	textureDying = dying;
 	textureBoom = exploding;
 	mapObjects = map.GetObjects("solid");
+
 
 	walk.setSpriteSheet(*textureWalking);
 	die.setSpriteSheet(*textureDying);
@@ -45,6 +46,17 @@ Citizen::Citizen(int type, Level &map, sf::Texture *walking, sf::Texture *dying,
 		die.addFrame(sf::IntRect(54, 0, 76, 75));
 		animSprite.setScale(0.7, 0.7);
 	}
+	if (type == 3) 
+	{
+		walk.addFrame(sf::IntRect(0, 0, 64, 82));
+		walk.addFrame(sf::IntRect(64, 24, 50, 45));
+		walk.addFrame(sf::IntRect(114, 0, 64, 82));
+		walk.addFrame(sf::IntRect(178, 24, 49, 45));
+
+		die.addFrame(sf::IntRect(0, 7, 62, 64));
+		die.addFrame(sf::IntRect(63, 0, 68, 63));
+		animSprite.setScale(0.6, 0.6);
+	}
 
 	boom.addFrame(sf::IntRect(134, 3, 23, 21));
 	boom.addFrame(sf::IntRect(224, 27, 37, 33));
@@ -57,11 +69,9 @@ Citizen::Citizen(int type, Level &map, sf::Texture *walking, sf::Texture *dying,
 	boom.addFrame(sf::IntRect(113, 188, 54, 85));
 	boom.addFrame(sf::IntRect(202, 103, 64, 57));
 	boom.addFrame(sf::IntRect(300, 205, 66, 59));
+	this->type = type;
 
-	std::vector<Object> vec = map.GetObjects("spawnArea");
-
-	int num = rand() % vec.size();
-	position = sf::Vector2f((float)(rand() % (int)vec[num].rect.width + vec[num].rect.left), (float)(rand() % (int)vec[num].rect.height + vec[num].rect.top));
+	position = pos;
 	
 	speedVec = sf::Vector2f(0, 0);
 	currentAnimation = &walk;
@@ -93,7 +103,6 @@ void Citizen::draw(sf::RenderTarget &renderTarget, sf::View &view) {
 	sf::FloatRect screenRect(sf::Vector2f(view.getCenter().x - (view.getSize().x) / 2, view.getCenter().y - (view.getSize().y) / 2), view.getSize());
 	//if (screenRect.intersects(rect));
 			renderTarget.draw(animSprite);
-			a++;
 }
 
 sf::FloatRect Citizen::getRect()
@@ -192,7 +201,6 @@ void Citizen::collisionWithWall()
 			if (direction < 0) direction = 3;
 			
 		}
-		a++;
 	}
 }
 

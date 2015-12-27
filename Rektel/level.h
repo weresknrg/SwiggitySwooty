@@ -35,6 +35,7 @@
 		Object GetObject(std::string name);
 		std::vector<Object> GetObjects(std::string name);//выдаем объект в наш уровень
 		std::vector<Object> GetAllObjects();//выдаем все объекты в наш уровень
+		
 		virtual void Level::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		{
 			// apply the transform
@@ -46,6 +47,7 @@
 			// draw the vertex array
 			target.draw(layers[0].m_vertices, states);
 		}//рисуем в окно
+		
 		sf::Vector2i GetTileSize();//получаем размер тайла
 
 	private:

@@ -13,7 +13,7 @@ private:
 	bool isExploding;
 	float rotationAngle;
 	int direction;
-	int a;
+	int type;
 	sf::FloatRect rect;
 
 	sf::Time dyingTime;
@@ -33,7 +33,7 @@ private:
 
 public:
 	void collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation);
-	Citizen(int type, Level &map, sf::Texture *Walking, sf::Texture *die, sf::Texture *exploding);
+	Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *Walking, sf::Texture *die, sf::Texture *exploding);
 	void update(sf::Time dt);
 	void draw(sf::RenderTarget &renderTarget, sf::View &view);
 	sf::FloatRect getRect();

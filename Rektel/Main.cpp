@@ -30,14 +30,18 @@ int main()
 
 	std::list<Citizen*> citizensList;
 
-	sf::Texture guyWalkTypes[3];
-	sf::Texture guyDyingTypes[3];
+	sf::Texture guyWalkTypes[4];
+	sf::Texture guyDyingTypes[4];
 	sf::Texture guyExploding;
 	initTextures(guyWalkTypes, guyDyingTypes, guyExploding);
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 60; i++) {
+		std::vector<Object> vec = map.GetObjects("spawnArea");
+		int num = rand() % vec.size();
+		sf::Vector2f pos = sf::Vector2f((float)(rand() % (int)vec[num].rect.width + vec[num].rect.left), (float)(rand() % (int)vec[num].rect.height + vec[num].rect.top));
 		int type = rand() % 3;
-		citizensList.push_back(new Citizen(type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
+		if (rand() % 2 == 0 && rand() % 2 == 0 && rand() % 2 == 0) type = 3; // спавн мента 1/2 * 1/2 * 1/2 = 16.6%
+		citizensList.push_back(new Citizen(pos, type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 	}
 	
 	while (window.isOpen())
@@ -67,8 +71,14 @@ int main()
 				else
 				{
 					It = citizensList.erase(It);
+					
 					int type = rand() % 3;
-					citizensList.push_back(new Citizen(type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
+					std::vector<Object> vec = map.GetObjects("spawnArea");
+					int num = rand() % vec.size();
+					sf::Vector2f pos = sf::Vector2f((float)(rand() % (int)vec[num].rect.width + vec[num].rect.left), (float)(rand() % (int)vec[num].rect.height + vec[num].rect.top));
+					if (rand() % 2 == 0 && rand() % 2 == 0 && rand() % 2 == 0) type = 3;
+					if(!getVisibleArea().contains(pos))
+						citizensList.push_back(new Citizen(pos, type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 				}
 			}
 
@@ -105,6 +115,9 @@ void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Tex
 	image.loadFromFile("images/Citizens/guy3walk.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyWalkTypes[2].loadFromImage(image);
+	image.loadFromFile("images/Citizens/copWalk.png");
+	image.createMaskFromColor(sf::Color(255, 255, 255));
+	guyWalkTypes[3].loadFromImage(image);
 
 	image.loadFromFile("images/Citizens/guy1death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
@@ -115,6 +128,9 @@ void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Tex
 	image.loadFromFile("images/Citizens/guy3death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyDyingTypes[2].loadFromImage(image);
+	image.loadFromFile("images/Citizens/copDeath.png");
+	image.createMaskFromColor(sf::Color(255, 255, 255));
+	guyDyingTypes[3].loadFromImage(image);
 
 	image.loadFromFile("images/Citizens/BSS.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
