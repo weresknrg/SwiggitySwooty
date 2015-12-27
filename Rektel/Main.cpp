@@ -35,8 +35,8 @@ int main()
 	sf::Texture guyExploding;
 	initTextures(guyWalkTypes, guyDyingTypes, guyExploding);
 
-	for (int i = 0; i < 100; i++) {
-		int type = rand() % 2;
+	for (int i = 0; i < 50; i++) {
+		int type = rand() % 3;
 		citizensList.push_back(new Citizen(type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 	}
 	
@@ -58,7 +58,8 @@ int main()
 			std::list<Citizen*>::iterator It;
 			for (It = citizensList.begin(); It != citizensList.end();) 
 			{	
-				if ((*It)->checkIsAlife()) {
+				if ((*It)->checkIsAlife())
+				{
 					(*It)->update(ups);
 					(*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation());
 					It++;
@@ -66,16 +67,20 @@ int main()
 				else
 				{
 					It = citizensList.erase(It);
+					int type = rand() % 3;
+					citizensList.push_back(new Citizen(type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 				}
 			}
 
 		}
 
-		map.Draw(window);
+
+		int drawn = 0;
+		window.draw(map);
 		p.draw(window);
 		for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end(); It++)
 		{
-			(*It)->draw(window);
+				(*It)->draw(window, camera);
 		}
 		window.display();
 		window.clear();

@@ -1,3 +1,4 @@
+
 #include "level.h"
 
 int Object::GetPropertyInt(std::string name)//возвращаем номер свойства в нашем списке
@@ -87,7 +88,8 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 	while (layerElement)
 	{
 		Layer layer;
-
+		layer.m_vertices.setPrimitiveType(sf::Quads);
+		layer.m_vertices.resize(width * height * 4);
 		// если присутствует opacity, то задаем прозрачность слоя, иначе он полностью непрозрачен
 		if (layerElement->Attribute("opacity") != NULL)
 		{
@@ -99,7 +101,7 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 			layer.opacity = 255;
 		}
 
-		//  контейнер <data> 
+		//  контейнер <data> 
 		TiXmlElement *layerDataElement;
 		layerDataElement = layerElement->FirstChildElement("data");
 
@@ -108,7 +110,7 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 			std::cout << "Bad map. No layer information found." << std::endl;
 		}
 
-		//  контейнер <tile> - описание тайлов каждого слоя
+		//  контейнер <tile> - описание тайлов каждого слоя
 		TiXmlElement *tileElement;
 		tileElement = layerDataElement->FirstChildElement("tile");
 
@@ -129,13 +131,23 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 			// Устанавливаем TextureRect каждого тайла
 			if (subRectToUse >= 0)
 			{
-				sf::Sprite sprite;
-				sprite.setTexture(tilesetImage);
-				sprite.setTextureRect(subRects[subRectToUse]);
-				sprite.setPosition(x * tileWidth, y * tileHeight);
-				sprite.setColor(sf::Color(255, 255, 255, layer.opacity));
+				// get a pointer to the current tile's quad
+				sf::Vertex* quad = &layer.m_vertices[(x + y * 100) * 4];
 
-				layer.tiles.push_back(sprite);//закидываем в слой спрайты тайлов
+				// define its 4 corners
+				quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight);
+				quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight);
+				quad[2].position = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight);
+				quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight);
+
+				// define its 4 texture coordinates
+				quad[0].texCoords = sf::Vector2f(subRects[subRectToUse].left, subRects[subRectToUse].top);
+				quad[1].texCoords = sf::Vector2f(subRects[subRectToUse].left + subRects[subRectToUse].width, subRects[subRectToUse].top);
+				quad[2].texCoords = sf::Vector2f(subRects[subRectToUse].left + subRects[subRectToUse].width, subRects[subRectToUse].top + subRects[subRectToUse].height);
+				quad[3].texCoords = sf::Vector2f(subRects[subRectToUse].left, subRects[subRectToUse].top + subRects[subRectToUse].height);
+
+
+				//закидываем в слой спрайты тайлов
 			}
 
 			tileElement = tileElement->NextSiblingElement("tile");
@@ -164,7 +176,7 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 		objectGroupElement = map->FirstChildElement("objectgroup");
 		while (objectGroupElement)
 		{
-			//  контейнер <object>
+			//  контейнер <object>
 			TiXmlElement *objectElement;
 			objectElement = objectGroupElement->FirstChildElement("object");
 
@@ -284,10 +296,3 @@ sf::Vector2i Level::GetTileSize()
 	return sf::Vector2i(tileWidth, tileHeight);
 }
 
-void Level::Draw(sf::RenderWindow &window)
-{
-	// рисуем все тайлы (объекты не рисуем!)
-	for (int layer = 0; layer < layers.size(); layer++)
-		for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
-			window.draw(layers[layer].tiles[tile]);
-}

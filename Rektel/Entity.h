@@ -6,6 +6,8 @@
 
 class Entity
 {
+public:
+	sf::Sprite sprite;
 protected:
 	std::vector<Object> mapObjects;
 	std::vector<Object>::iterator mapObjectIter;
@@ -14,7 +16,7 @@ protected:
 	sf::RectangleShape rect;
 	sf::Vector2f position;
 	sf::Texture texture;
-	sf::Sprite sprite;
+
 	sf::String name;
 	Entity(sf::Image &image, sf::Vector2f startPosition, sf::String Name);
 	Entity();

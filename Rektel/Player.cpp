@@ -6,7 +6,7 @@
 #define SCALE 0.6
 
 Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition, sf::String Name) :Entity(image, startPosition, Name) {
-	mapObjects = lev.GetAllObjects();
+	mapObjects = lev.GetObjects("solid");
 	steer = 0;
 	position = startPosition;
 	sprite.setScale(SCALE, SCALE);

@@ -25,17 +25,27 @@
 	struct Layer//слои
 	{
 		int opacity;//непрозрачность слоя
-		std::vector<sf::Sprite> tiles;//закидываем в вектор тайлы
+		sf::VertexArray m_vertices;//закидываем в вектор тайлы
 	};
 
-	class Level//главный класс - уровень
+	class Level : public sf::Drawable, public sf::Transformable //главный класс - уровень
 	{
 	public:
 		bool LoadFromFile(std::string filename);//возвращает false если не получилось загрузить
 		Object GetObject(std::string name);
 		std::vector<Object> GetObjects(std::string name);//выдаем объект в наш уровень
 		std::vector<Object> GetAllObjects();//выдаем все объекты в наш уровень
-		void Draw(sf::RenderWindow &window);//рисуем в окно
+		virtual void Level::draw(sf::RenderTarget& target, sf::RenderStates states) const
+		{
+			// apply the transform
+			states.transform *= getTransform();
+
+			// apply the tileset texture
+			states.texture = &tilesetImage;
+
+			// draw the vertex array
+			target.draw(layers[0].m_vertices, states);
+		}//рисуем в окно
 		sf::Vector2i GetTileSize();//получаем размер тайла
 
 	private:
@@ -45,6 +55,7 @@
 		sf::Texture tilesetImage;//текстура карты
 		std::vector<Object> objects;//массив типа Объекты, который мы создали
 		std::vector<Layer> layers;
+
 	};
 
 	///////////////////////////////////////

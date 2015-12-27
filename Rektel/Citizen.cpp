@@ -6,7 +6,7 @@ Citizen::Citizen(int type, Level &map, sf::Texture *walking, sf::Texture *dying,
 	textureWalking = walking;
 	textureDying = dying;
 	textureBoom = exploding;
-	mapObjects = map.GetAllObjects();
+	mapObjects = map.GetObjects("solid");
 
 	walk.setSpriteSheet(*textureWalking);
 	die.setSpriteSheet(*textureDying);
@@ -62,7 +62,7 @@ Citizen::Citizen(int type, Level &map, sf::Texture *walking, sf::Texture *dying,
 
 	int num = rand() % vec.size();
 	position = sf::Vector2f((float)(rand() % (int)vec[num].rect.width + vec[num].rect.left), (float)(rand() % (int)vec[num].rect.height + vec[num].rect.top));
-
+	
 	speedVec = sf::Vector2f(0, 0);
 	currentAnimation = &walk;
 	rotationAngle = 0;
@@ -70,23 +70,30 @@ Citizen::Citizen(int type, Level &map, sf::Texture *walking, sf::Texture *dying,
 
 	dyingTime = sf::seconds(0.4);
 	explodingTime = sf::milliseconds(11 * 70);
-	unwalkable = map.GetObjects("unwalkable");
+	direction = rand() % 4;
+	speed = 30;
 }
 
 void Citizen::update(sf::Time dt) {
-
+	updateAnimation(dt);
+	if (!isDying) 
+	{
+		walkingDownTheStreet(dt);
+	}
 
 	position += speedVec * dt.asSeconds();
-	updateAnimation(dt);
-
 }
 
 Citizen::~Citizen()
 {
 }
 
-void Citizen::draw(sf::RenderTarget &renderTarget) {
-	renderTarget.draw(animSprite);
+void Citizen::draw(sf::RenderTarget &renderTarget, sf::View &view) {
+	
+	sf::FloatRect screenRect(sf::Vector2f(view.getCenter().x - (view.getSize().x) / 2, view.getCenter().y - (view.getSize().y) / 2), view.getSize());
+	//if (screenRect.intersects(rect));
+			renderTarget.draw(animSprite);
+			a++;
 }
 
 sf::FloatRect Citizen::getRect()
@@ -100,6 +107,41 @@ bool Citizen::checkIsAlife()
 	return false;
 }
 
+
+void Citizen::walkingDownTheStreet(sf::Time dt)
+{
+	//Check collision with wall
+	collisionWithWall();
+	rect = animSprite.getGlobalBounds();
+
+
+	if (direction == 0) //Up
+	{
+		speedVec.x = 0;
+		speedVec.y = -1;
+		rotationAngle = 0;
+	}
+	if (direction == 1) //Right
+	{
+		speedVec.x = 1;
+		speedVec.y = 0;
+		rotationAngle = 90;
+	}
+	if (direction == 2) //Down
+	{
+		speedVec.x = 0;
+		speedVec.y = 1;
+		rotationAngle = 180;
+	}
+	if (direction == 3) //Left
+	{
+		speedVec.x = -1;
+		speedVec.y = 0;
+		rotationAngle = 270;
+	}
+	speedVec = speed * speedVec;
+
+}
 
 void Citizen::updateAnimation(sf::Time dt)
 {
@@ -132,8 +174,26 @@ void Citizen::updateAnimation(sf::Time dt)
 	animSprite.setOrigin(40, 40);
 	animSprite.setPosition(position);
 	animSprite.setRotation(rotationAngle);
+	
 	animSprite.update(dt);
 	animSprite.play(*currentAnimation);
+}
+
+void Citizen::collisionWithWall()
+{
+	for (int i = 0; i < mapObjects.size(); i++)
+	{
+		if (mapObjects[i].rect.intersects(animSprite.getGlobalBounds()))
+		{
+			int dir = rand() % 2;
+			if (dir == 0) direction++;
+			else direction--;
+			if (direction > 3) direction = 0;
+			if (direction < 0) direction = 3;
+			
+		}
+		a++;
+	}
 }
 
 void Citizen::collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation) {
