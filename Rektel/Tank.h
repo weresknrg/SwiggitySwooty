@@ -9,13 +9,13 @@ class Tank :
 	public Entity
 {
 public:
-	Tank(sf::Texture* texture, sf::Texture* bullet, Level &map);
+	Tank(sf::Vector2f stPos, sf::Texture* texture, sf::Texture* bullet, Level &map);
 	~Tank();
 	void draw(sf::RenderTarget& renderTarget);
 	void update(sf::Time dt);
 	void traceThePlayer(sf::Vector2f playerPos);
 	bool isTankGone();
-
+	sf::FloatRect getRect();
 private:
 	float baseRotation;
 	float turretRotation;
@@ -26,5 +26,6 @@ private:
 	sf::Time lifeTime;
 	std::list <Bullet *> bullets;
 	bool isGone;
+	
 };
 

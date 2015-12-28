@@ -17,52 +17,59 @@ int main()
 {
 	srand(time(NULL));
 	sf::Clock clock;
+	sf::Clock spawnTankTimer;
+	spawnTankTimer.restart();
 	sf::Time accumulator = sf::Time::Zero;
 	sf::Time ups = sf::seconds(1.f / 60.f);
 	
 	Level map;
 	map.LoadFromFile("levels/testMap.tmx");
-	// Player textures
+	// Текстуры игрока
 	sf::Image heroImage;
 	heroImage.loadFromFile("images/car_tex.png");
 	
-	//tank textures
+	//Текстуры танка
 	sf::Texture tankTex[2];
 	sf::Texture bullet;
 	sf::Image image;
+	// корпус
 	image.loadFromFile("images/tankBase.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	tankTex[0].loadFromImage(image);
-
+	//башня
 	image.loadFromFile("images/tankTurret.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	tankTex[1].loadFromImage(image);
-	
+	//снаряды
 	image.loadFromFile("images/bullet.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	bullet.loadFromImage(image);
 
-	Tank* tank;
-	tank = new Tank(tankTex, &bullet, map);
+	Tank* tank = 0;
+	
 
-	//create player
+	//создаем игрока
 	Object player = map.GetObject("player");
 	Player p(heroImage, map, sf::Vector2f(player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2), "player");
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
-	//create citizens
+	
+	//создаем жителе
 	std::list<Citizen*> citizensList;
-
 	sf::Texture guyWalkTypes[4];
 	sf::Texture guyDyingTypes[4];
 	sf::Texture guyExploding;
 	initTextures(guyWalkTypes, guyDyingTypes, guyExploding);
 
-	for (int i = 0; i < 60; i++) {
+	for (int i = 0; i < 60; i++) 
+	{
+		//выбираем случайные области спавна
 		std::vector<Object> vec = map.GetObjects("spawnArea");
 		int num = rand() % vec.size();
+		//случайную точку в области
 		sf::Vector2f pos = sf::Vector2f((float)(rand() % (int)vec[num].rect.width + vec[num].rect.left), (float)(rand() % (int)vec[num].rect.height + vec[num].rect.top));
+		//выбираем тип жителя, 4 тип - коп
 		int type = rand() % 3;
-		if (rand() % 2 == 0 && rand() % 2 == 0 && rand() % 2 == 0) type = 3; // спавн мента 1/2 * 1/2 * 1/2 = 16.6%
+		if (rand() % 2 == 0 && rand() % 2 == 0 && rand() % 2 == 0) type = 3; // spawn cop 1/2 * 1/2 * 1/2 = 16.6% chance
 		citizensList.push_back(new Citizen(pos, type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 	}
 	
@@ -78,24 +85,53 @@ int main()
 		while (accumulator > ups)
 		{
 			accumulator -= ups;
+			//обновляем игрока
 			p.update(ups);
+			//обновляем положение камеры
 			window.setView(camera);
 			setUpCamera(p.getPosition().x, p.getPosition().y);
-			tank->traceThePlayer(p.getPosition());
-			tank->update(ups);
+			
+			//обновляем танк	
+			if (tank != 0) // если танк существует
+			{					
+				if (tank->isTankGone()) //должен ли танк уехать
+				{
+					if (!getVisibleArea().intersects(tank->getRect())) // не видит ли его камера
+					{													//если нет то удаляем
+						delete tank;
+						tank = 0;
+						spawnTankTimer.restart();
+					}
+				}
+				else // время жизни танка не истекло - обновляем
+				{
+					tank->traceThePlayer(p.getPosition());
+					tank->update(ups);
+				}
+			} 
+			if(spawnTankTimer.getElapsedTime() >= sf::seconds(10) && tank == 0) //если танк не существует
+			{                                                                // и прошло 10 секунд с момента удаления - создаем
+				std::vector <Object> vec = map.GetObjects("tankSpawns");
+				int tmp = rand() % vec.size(); // выбираем случайную позицию
+				sf::Vector2f stPos = sf::Vector2f((float)(rand() % (int)vec[tmp].rect.width + vec[tmp].rect.left), (float)(rand() % (int)vec[tmp].rect.height + vec[tmp].rect.top));
+				if(!getVisibleArea().contains(stPos)) // видит ли камера точку спавна
+					tank = new Tank(stPos, tankTex, &bullet, map); // нет - создаем танк
+			}
+
+			// обновляем жителей
 			for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end();) 
 			{	
-				if ((*It)->checkIsAlife())
+				if ((*It)->checkIsAlife()) //если живой - обновляем
 				{
 					(*It)->update(ups);
 					(*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation());
 					It++;
 				} 
-				else
+				else //если нет - удаляем
 				{
 					It = citizensList.erase(It);
-					
-					int type = rand() % 3;
+					// и сразу создаем нового (так же как танк)
+					int type = rand() % 3; // + выбираем тип
 					std::vector<Object> vec = map.GetObjects("spawnArea");
 					int num = rand() % vec.size();
 					sf::Vector2f pos = sf::Vector2f((float)(rand() % (int)vec[num].rect.width + vec[num].rect.left), (float)(rand() % (int)vec[num].rect.height + vec[num].rect.top));
@@ -104,18 +140,21 @@ int main()
 						citizensList.push_back(new Citizen(pos, type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 				}
 			}
-
 		}
 
-
-		int drawn = 0;
+		//рисуем карту
 		window.draw(map);
+		//игрока
 		p.draw(window);
+		//жителей
 		for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end(); It++)
 		{
 				(*It)->draw(window);
 		}
-		tank->draw(window);
+		//танк и его пули
+		if(tank != 0)
+			tank->draw(window);
+		
 		window.display();
 		window.clear();
 		accumulator += clock.restart();
@@ -124,12 +163,11 @@ int main()
 	return 0;
 }
 
+//Установка текстур
 void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Texture& guyExploding) {
 
 	sf::Image image;
-	
-	image.createMaskFromColor(sf::Color(255, 255, 255));
-
+	//текстуры ходьбы
 	image.loadFromFile("images/Citizens/guy1walk.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyWalkTypes[0].loadFromImage(image);
@@ -139,10 +177,12 @@ void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Tex
 	image.loadFromFile("images/Citizens/guy3walk.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyWalkTypes[2].loadFromImage(image);
+	//коп
 	image.loadFromFile("images/Citizens/copWalk.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyWalkTypes[3].loadFromImage(image);
-
+	
+	//текстуры смерти для житилей
 	image.loadFromFile("images/Citizens/guy1death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyDyingTypes[0].loadFromImage(image);
@@ -152,10 +192,12 @@ void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Tex
 	image.loadFromFile("images/Citizens/guy3death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyDyingTypes[2].loadFromImage(image);
+	//коп (смертть)
 	image.loadFromFile("images/Citizens/copDeath.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyDyingTypes[3].loadFromImage(image);
 
+	//кровавый взрыв
 	image.loadFromFile("images/Citizens/BSS.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	guyExploding.loadFromImage(image);

@@ -1,14 +1,16 @@
 #include "Tank.h"
 
-Tank::Tank(sf::Texture* texture, sf::Texture* bullet, Level &map)
+Tank::Tank(sf::Vector2f stPos, sf::Texture* texture, sf::Texture* bullet, Level &map)
 {
+	//setup sprites
 	this->bullet.setTexture(*bullet);
 	base.setTexture(texture[0]);
 	turret.setTexture(texture[1]);
 	mapObjects = map.GetAllObjects();
-	std::vector <Object> vec = map.GetObjects("tankSpawns");
-	int tmp = rand() % vec.size();
-	position = sf::Vector2f((float)(rand() % (int)vec[tmp].rect.width + vec[tmp].rect.left), (float)(rand() % (int)vec[tmp].rect.height + vec[tmp].rect.top));
+	//select random position
+
+	position = stPos;
+	
 	base.setScale(0.8, 0.8);
 	base.setOrigin(base.getLocalBounds().width / 2, base.getLocalBounds().height / 2);
 	base.setPosition(position);
@@ -22,7 +24,7 @@ Tank::Tank(sf::Texture* texture, sf::Texture* bullet, Level &map)
 
 void Tank::update(sf::Time dt)
 {
-	if (shoot.getElapsedTime() >= sf::seconds(4))
+	if (shoot.getElapsedTime() >= sf::seconds(5)) //shoot once in 5 seconds
 	{
 		std::cout << "shoot" << std::endl;
 		shoot.restart();
@@ -33,21 +35,20 @@ void Tank::update(sf::Time dt)
 
 	for (std::list<Bullet *>::iterator iter = bullets.begin(); iter != bullets.end(); ) 
 	{
-		
 		if ((*iter)->checkIsAlife()) 
 		{
 			(*iter)->update(dt);
 			iter++;
 		}
-		else {
+		else 
+		{
 			iter = bullets.erase(iter);
 		}
-		
 	}
 
 	if (lifeTime <= sf::Time::Zero && bullets.size() == 0)
 	{
-		//isGone = true;
+		isGone = true;
 	}
 
 }
@@ -61,6 +62,11 @@ void Tank::traceThePlayer(sf::Vector2f playerPos)
 bool Tank::isTankGone()
 {
 	return isGone;
+}
+
+sf::FloatRect Tank::getRect()
+{
+	return base.getGlobalBounds();
 }
 
 Tank::~Tank()
