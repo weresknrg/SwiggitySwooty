@@ -98,11 +98,8 @@ Citizen::~Citizen()
 {
 }
 
-void Citizen::draw(sf::RenderTarget &renderTarget, sf::View &view) {
-	
-	sf::FloatRect screenRect(sf::Vector2f(view.getCenter().x - (view.getSize().x) / 2, view.getCenter().y - (view.getSize().y) / 2), view.getSize());
-	//if (screenRect.intersects(rect));
-			renderTarget.draw(animSprite);
+void Citizen::draw(sf::RenderTarget &renderTarget) {
+		renderTarget.draw(animSprite);
 }
 
 sf::FloatRect Citizen::getRect()

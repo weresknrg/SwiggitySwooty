@@ -7,6 +7,7 @@
 #include <list>
 #include "level.h"
 #include "Citizen.h"
+#include "Tank.h"
 #include "Camera.h"
 
 void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Texture& guyExploding);
@@ -14,20 +15,41 @@ void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Tex
 sf::RenderWindow window(sf::VideoMode(1280, 800), "rektel");
 int main()
 {
+	srand(time(NULL));
 	sf::Clock clock;
 	sf::Time accumulator = sf::Time::Zero;
 	sf::Time ups = sf::seconds(1.f / 60.f);
 	
 	Level map;
 	map.LoadFromFile("levels/testMap.tmx");
-	
+	// Player textures
 	sf::Image heroImage;
 	heroImage.loadFromFile("images/car_tex.png");
 	
+	//tank textures
+	sf::Texture tankTex[2];
+	sf::Texture bullet;
+	sf::Image image;
+	image.loadFromFile("images/tankBase.png");
+	image.createMaskFromColor(sf::Color(255, 255, 255));
+	tankTex[0].loadFromImage(image);
+
+	image.loadFromFile("images/tankTurret.png");
+	image.createMaskFromColor(sf::Color(255, 255, 255));
+	tankTex[1].loadFromImage(image);
+	
+	image.loadFromFile("images/bullet.png");
+	image.createMaskFromColor(sf::Color(255, 255, 255));
+	bullet.loadFromImage(image);
+
+	Tank* tank;
+	tank = new Tank(tankTex, &bullet, map);
+
+	//create player
 	Object player = map.GetObject("player");
 	Player p(heroImage, map, sf::Vector2f(player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2), "player");
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
-
+	//create citizens
 	std::list<Citizen*> citizensList;
 
 	sf::Texture guyWalkTypes[4];
@@ -59,8 +81,9 @@ int main()
 			p.update(ups);
 			window.setView(camera);
 			setUpCamera(p.getPosition().x, p.getPosition().y);
-			std::list<Citizen*>::iterator It;
-			for (It = citizensList.begin(); It != citizensList.end();) 
+			tank->traceThePlayer(p.getPosition());
+			tank->update(ups);
+			for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end();) 
 			{	
 				if ((*It)->checkIsAlife())
 				{
@@ -90,8 +113,9 @@ int main()
 		p.draw(window);
 		for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end(); It++)
 		{
-				(*It)->draw(window, camera);
+				(*It)->draw(window);
 		}
+		tank->draw(window);
 		window.display();
 		window.clear();
 		accumulator += clock.restart();

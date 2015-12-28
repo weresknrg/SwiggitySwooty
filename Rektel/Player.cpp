@@ -125,7 +125,7 @@ void Player::driving(sf::Time dt)  //Управление
 void Player::collisionWithMap() // Обраблтка столкновений с объектами на карте
 {
 	int counter = 0;
-	for (mapObjectIter = mapObjects.begin(); mapObjectIter != mapObjects.end(); mapObjectIter++) {
+	for (std::vector<Object>::iterator mapObjectIter = mapObjects.begin(); mapObjectIter != mapObjects.end(); mapObjectIter++) {
 		if (Collision::checkCollision(sprite, mapObjects[counter].rect)) {
 			if (mapObjects[counter].name == "solid")
 			{

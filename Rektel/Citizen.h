@@ -35,7 +35,7 @@ public:
 	void collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation);
 	Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *Walking, sf::Texture *die, sf::Texture *exploding);
 	void update(sf::Time dt);
-	void draw(sf::RenderTarget &renderTarget, sf::View &view);
+	void draw(sf::RenderTarget &renderTarget);
 	sf::FloatRect getRect();
 	bool checkIsAlife();
 	~Citizen();

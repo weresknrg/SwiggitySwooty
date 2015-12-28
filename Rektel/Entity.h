@@ -7,10 +7,11 @@
 class Entity
 {
 public:
-	sf::Sprite sprite;
+	
 protected:
+	virtual void draw(sf::RenderTarget& renderTarget) = 0;
+	sf::Sprite sprite;
 	std::vector<Object> mapObjects;
-	std::vector<Object>::iterator mapObjectIter;
 	float width, height;
 	sf::Vector2f speedVec;
 	sf::RectangleShape rect;
