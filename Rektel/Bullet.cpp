@@ -40,3 +40,13 @@ bool Bullet::checkCollisionsWithWall()
 	}
 	return false;
 }
+
+void Bullet::setBulletLife(bool isAlife)
+{
+	this->isAlife = isAlife;
+}
+
+sf::Sprite Bullet::getSprite()
+{
+	return sprite;
+}

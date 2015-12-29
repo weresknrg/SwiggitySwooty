@@ -17,6 +17,9 @@ Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition, sf::Str
 	rect.setScale(sprite.getScale());
 	rect.setOrigin(sprite.getOrigin());
 	rect.setFillColor(sf::Color::Green);
+	lifes = 3;
+	homisides = 0;
+	lifeTime = sf::seconds(30);
 }
 
 void Player::update(sf::Time dt)
@@ -24,6 +27,7 @@ void Player::update(sf::Time dt)
 	sprite.setPosition(rect.getPosition());
 	sprite.setRotation(rect.getRotation());
 
+	lifeTime -= dt;
 	driving(dt);
 	float forceFrict;
 	float forceResist;
@@ -32,7 +36,7 @@ void Player::update(sf::Time dt)
 	speedVec = Pixels2Meter(speed) * sf::Vector2f(sinf(rotationAngle* 3.14159265f / 180.0f), cosf(rotationAngle * 3.14159265f / 180.0f));
 	rotationAngle += steer;
 	forceFrict = -250.5f  * speed;
-	forceResist = -15.3f  * sgn(speed) * speed;
+	forceResist = -10.3f  * sgn(speed) * speed *speed;
 
 	if (breaking) {
 		totalForce = -sgn(speed) * breakForce + forceFrict + forceResist;
@@ -44,7 +48,7 @@ void Player::update(sf::Time dt)
 		totalForce = engineForce + forceFrict + forceResist;
 	}
 
-	//std::cout << "w " << rect.getSize().x << "\t h \t " << height*SCALE << std::endl;
+	std::cout << lifeTime.asSeconds()<< std::endl;
 	//std::cout << "acc " << acceleration <<"\t speed \t "<< speed <<"\t frc \t"<< totalForce <<std::endl;
 
 	acceleration = totalForce / mass;
@@ -126,12 +130,14 @@ void Player::collisionWithMap() // Обраблтка столкновений с объектами на карте
 {
 	int counter = 0;
 	for (std::vector<Object>::iterator mapObjectIter = mapObjects.begin(); mapObjectIter != mapObjects.end(); mapObjectIter++) {
-		if (Collision::checkCollision(sprite, mapObjects[counter].rect)) {
+		if (Collision::checkCollision(sprite, mapObjects[counter].rect)) 
+		{
 			if (mapObjects[counter].name == "solid")
 			{
 				// вместо этого, сюда написать что нибуть нормальное
 				speedVec = -speedVec;
 				speed = -0.5 * speed;
+				lifes--;
 			}
 		}
 		counter++;
@@ -142,12 +148,12 @@ template <typename T> int Player::sgn(T val) {
 	return (T(0) < val) - (val < T(0));
 }
 
-inline const float Player::Meter2Pixels(float meters)
+const float Player::Meter2Pixels(float meters)
 {
 	return meters * PixelsPerMeter;
 }
 
-inline const float Player::Pixels2Meter(float pixels)
+const float Player::Pixels2Meter(float pixels)
 {
 	return pixels / PixelsPerMeter;
 }
@@ -175,4 +181,39 @@ sf::Vector2f Player::getSpeedVec()
 float Player::getRotation()
 {
 	return rotationAngle;
+}
+
+void Player::increaseHomisideCounter()
+{
+	homisides++;
+}
+
+int Player::getHomisides()
+{
+	return homisides;
+}
+
+sf::Sprite Player::getSprite()
+{
+	return sprite;
+}
+
+void Player::decreaseLifes(int lifes)
+{
+	this->lifes-=lifes;
+}
+
+int Player::getLifes()
+{
+	return lifes;
+}
+
+void Player::increaseLifeTime(sf::Time time)
+{
+	lifeTime += time;
+}
+
+sf::Time Player::getRemainingTime()
+{
+	return lifeTime;
 }

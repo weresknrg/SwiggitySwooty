@@ -3,6 +3,7 @@
 #include <list>
 #include "level.h"
 #include "Bullet.h"
+#include "Collision.h"
 
 
 class Tank :
@@ -16,6 +17,8 @@ public:
 	void traceThePlayer(sf::Vector2f playerPos);
 	bool isTankGone();
 	sf::FloatRect getRect();
+	int collisionWithPlayer(sf::Sprite playerRect);
+
 private:
 	float baseRotation;
 	float turretRotation;

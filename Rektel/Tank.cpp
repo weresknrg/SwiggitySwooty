@@ -26,7 +26,6 @@ void Tank::update(sf::Time dt)
 {
 	if (shoot.getElapsedTime() >= sf::seconds(5)) //shoot once in 5 seconds
 	{
-		std::cout << "shoot" << std::endl;
 		shoot.restart();
 		bullets.push_back(new Bullet(bullet, position, mapObjects, turretRotation));
 	}
@@ -67,6 +66,23 @@ bool Tank::isTankGone()
 sf::FloatRect Tank::getRect()
 {
 	return base.getGlobalBounds();
+}
+
+int Tank::collisionWithPlayer(sf::Sprite playerSprite)
+{
+	for (std::list<Bullet *>::iterator iter = bullets.begin(); iter != bullets.end(); iter++) 
+	{
+		if (Collision::checkCollision((*iter)->getSprite(), playerSprite))
+		{
+			(*iter)->setBulletLife(false);
+			return 2;
+		}
+	}
+	if (Collision::checkCollision(playerSprite, base)) 
+	{
+		return 1;
+	}
+	return 0;
 }
 
 Tank::~Tank()

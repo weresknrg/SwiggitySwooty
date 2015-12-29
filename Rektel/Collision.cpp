@@ -40,6 +40,30 @@ void  Collision::project(sf::Vector2f& axis, sf::VertexArray &_rectangle, float 
 	}
 }
 
+bool Collision::checkCollision(sf::Sprite &s1, sf::Sprite &s2)
+{
+	sf::VertexArray one(sf::Quads, 4);
+	sf::VertexArray two(sf::Quads, 4);
+
+	sf::Transform transform = s1.getTransform();
+	sf::FloatRect rect = s1.getLocalBounds();
+
+	one[0] = transform.transformPoint(sf::Vector2f(rect.left, rect.top + rect.height));
+	one[1] = transform.transformPoint(sf::Vector2f(rect.left, rect.top));
+	one[2] = transform.transformPoint(sf::Vector2f(rect.left + rect.width, rect.top));
+	one[3] = transform.transformPoint(sf::Vector2f(rect.left + rect.width, rect.top + rect.height));
+
+	transform = s2.getTransform();
+	rect = s2.getLocalBounds();
+
+	two[0] = transform.transformPoint(sf::Vector2f(rect.left, rect.top + rect.height));
+	two[1] = transform.transformPoint(sf::Vector2f(rect.left, rect.top));
+	two[2] = transform.transformPoint(sf::Vector2f(rect.left + rect.width, rect.top));
+	two[3] = transform.transformPoint(sf::Vector2f(rect.left + rect.width, rect.top + rect.height));
+
+	return intersects(one, two);
+}
+
 bool Collision::checkCollision(sf::Sprite &s1, sf::FloatRect &s2)
 {
 	sf::VertexArray one(sf::Quads, 4);
@@ -59,7 +83,9 @@ bool Collision::checkCollision(sf::Sprite &s1, sf::FloatRect &s2)
 	two[2] = sf::Vector2f(s2.left + s2.width, s2.top);
 	two[3] = sf::Vector2f(s2.left + s2.width, s2.top + s2.height);
 
-
+	return intersects(one, two);
+}
+bool Collision::intersects(sf::VertexArray &one, sf::VertexArray &two) {
 	sf::Vector2f axis;
 	float minA;
 	float minB;
@@ -117,5 +143,3 @@ bool Collision::checkCollision(sf::Sprite &s1, sf::FloatRect &s2)
 	return true;
 
 }
-
-

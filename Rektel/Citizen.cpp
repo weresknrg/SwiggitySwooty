@@ -113,12 +113,17 @@ bool Citizen::checkIsAlife()
 	return false;
 }
 
+int Citizen::getType()
+{
+	return type;
+}
+
 
 void Citizen::walkingDownTheStreet(sf::Time dt)
 {
 	//Check collision with wall
 	collisionWithWall();
-	rect = animSprite.getGlobalBounds();
+	//rect = animSprite.getGlobalBounds();
 
 
 	if (direction == 0) //Up
@@ -201,13 +206,15 @@ void Citizen::collisionWithWall()
 	}
 }
 
-void Citizen::collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation) {
+bool Citizen::collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation) {
 	if (animSprite.getGlobalBounds().intersects(playerRect) && !isDying)
 	{
 		rotationAngle = playerRotation;
 		speedVec.x = 50 * playerSpeedVec.x + 5;
 		speedVec.y = 50 * playerSpeedVec.y + 5;
 		isDying = true;
+		return true;
 	}
+	return false;
 }
 

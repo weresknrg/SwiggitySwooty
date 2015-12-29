@@ -8,7 +8,9 @@
 #include "level.h"
 #include "Citizen.h"
 #include "Tank.h"
+#include "GUI.h"
 #include "Camera.h"
+#include "GameOver.h"
 
 void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Texture& guyExploding);
 
@@ -17,11 +19,15 @@ int main()
 {
 	srand(time(NULL));
 	sf::Clock clock;
+
+	// таймер появления танка
 	sf::Clock spawnTankTimer;
-	spawnTankTimer.restart();
+	sf::Time gameTime = sf::Time::Zero;
 	sf::Time accumulator = sf::Time::Zero;
 	sf::Time ups = sf::seconds(1.f / 60.f);
-	
+	//создаем GUI
+	GUI gui;
+	//создаем карту
 	Level map;
 	map.LoadFromFile("levels/testMap.tmx");
 	// Текстуры игрока
@@ -53,14 +59,13 @@ int main()
 	Player p(heroImage, map, sf::Vector2f(player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2), "player");
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
 	
-	//создаем жителе
+	//создаем жителей
 	std::list<Citizen*> citizensList;
 	sf::Texture guyWalkTypes[4];
 	sf::Texture guyDyingTypes[4];
 	sf::Texture guyExploding;
 	initTextures(guyWalkTypes, guyDyingTypes, guyExploding);
-
-	for (int i = 0; i < 60; i++) 
+	for (int i = 0; i < 40; i++) 
 	{
 		//выбираем случайные области спавна
 		std::vector<Object> vec = map.GetObjects("spawnArea");
@@ -84,7 +89,12 @@ int main()
 		
 		while (accumulator > ups)
 		{
+			
 			accumulator -= ups;
+			gameTime += ups;
+
+			gui.updateData(getVisibleArea(), p.getRemainingTime(), p.getHomisides(), p.getLifes(), gameTime);
+
 			//обновляем игрока
 			p.update(ups);
 			//обновляем положение камеры
@@ -105,6 +115,20 @@ int main()
 				}
 				else // время жизни танка не истекло - обновляем
 				{
+					switch (tank->collisionWithPlayer(p.getSprite()))
+					{
+						case (2) : //столкнулся с пулей
+						{
+ 							p.decreaseLifes(1);
+							break;
+						}
+						case (1) : // столкнулся с танком
+						{
+							p.decreaseLifes(2);
+							break;
+						}
+					}
+					
 					tank->traceThePlayer(p.getPosition());
 					tank->update(ups);
 				}
@@ -124,11 +148,18 @@ int main()
 				if ((*It)->checkIsAlife()) //если живой - обновляем
 				{
 					(*It)->update(ups);
-					(*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation());
+					if ((*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation())) {
+						p.increaseHomisideCounter();
+						if ((*It)->getType() == 3) p.increaseLifeTime(sf::seconds(-1));
+						else p.increaseLifeTime(sf::seconds(2));
+						std::cout << p.getHomisides() << std::endl;
+					}
 					It++;
 				} 
 				else //если нет - удаляем
 				{
+					
+
 					It = citizensList.erase(It);
 					// и сразу создаем нового (так же как танк)
 					int type = rand() % 3; // + выбираем тип
@@ -151,10 +182,10 @@ int main()
 		{
 				(*It)->draw(window);
 		}
-		//танк и его пули
+		//танк если существует и его пули
 		if(tank != 0)
 			tank->draw(window);
-		
+		gui.draw(window);
 		window.display();
 		window.clear();
 		accumulator += clock.restart();

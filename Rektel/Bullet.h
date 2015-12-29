@@ -10,6 +10,8 @@ public:
 	void update(sf::Time dt);
 	bool checkIsAlife();
 	bool checkCollisionsWithWall();
+	void setBulletLife(bool isAlife);
+	sf::Sprite getSprite();
 private:
 	float speed;
 	bool isAlife;
