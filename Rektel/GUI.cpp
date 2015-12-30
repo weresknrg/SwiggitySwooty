@@ -27,7 +27,7 @@ void GUI::draw(sf::RenderTarget & renderTarget)
 	renderTarget.draw(gameTime);
 }
 
-GUI::GUI()
+GUI::GUI(sf::Font &font)
 {
 	font.loadFromFile("images/font.ttf");
 	killingSpree = sf::Text("0", font, 15);

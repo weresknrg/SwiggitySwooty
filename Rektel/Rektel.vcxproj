@@ -177,13 +177,11 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Citizen.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="GameOver.h" />
     <ClInclude Include="GUI.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Tank.h" />
-    <ClInclude Include="TileMap.h" />
     <ClInclude Include="TinyXML\tinystr.h" />
     <ClInclude Include="TinyXML\tinyxml.h" />
   </ItemGroup>
