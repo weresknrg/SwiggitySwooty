@@ -58,7 +58,7 @@ int main()
 
 	//создаем игрока
 	Object player = map.GetObject("player");
-	Player p(heroImage, map, sf::Vector2f(player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2), "player");
+	Player p(heroImage, map, sf::Vector2f(player.rect.left+player.rect.width/2, player.rect.top+player.rect.height/2));
 	camera.reset(sf::FloatRect(0, 0, 1280, 800));
 	
 	//создаем жителей
@@ -90,15 +90,12 @@ int main()
 
 		if(!isGameOver)
 		{ 
-			
-
 			while (accumulator > ups)
 			{
-
 				accumulator -= ups;
 				gameTime += ups;
 
-				gui.updateData(getVisibleArea(), p.getRemainingTime(), p.getHomisides(), p.getLifes(), gameTime);
+				gui.updateData(getVisibleArea(), p.getRemainingTime(), p.getHomisides(), p.getLifes(), gameTime); // обновляем информацию в интерфейсе 
 
 				//обновляем игрока
 				p.update(ups);
@@ -114,7 +111,7 @@ int main()
 						if (!getVisibleArea().intersects(tank->getRect())) // не видит ли его камера
 						{													//если нет то удаляем
 							delete tank;
-							tank = 0;
+							tank = 0; 
 							spawnTankTimer.restart();
 						}
 					}
@@ -150,21 +147,19 @@ int main()
 				// обновляем жителей
 				for (std::list<Citizen*>::iterator It = citizensList.begin(); It != citizensList.end();)
 				{
-					if ((*It)->checkIsAlife()) //если живой - обновляем
+					if ((*It)->checkIsAlife()) //если живой 
 					{
-						(*It)->update(ups);
-						if ((*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation())) {
-							p.increaseHomisideCounter();
-							if ((*It)->getType() == 3) p.increaseLifeTime(sf::seconds(-1));
-							else p.increaseLifeTime(sf::seconds(2));
-							std::cout << p.getHomisides() << std::endl;
+						(*It)->update(ups); // обновляем
+						if ((*It)->collisionWithPlayer(p.getRect(), p.getSpeedVec(), p.getRotation())) //если сбит игроком 
+						{
+							p.increaseHomisideCounter(); //увеличиваем счетчик убийств
+							if ((*It)->getType() == 3) p.increaseLifeTime(sf::seconds(-2)); //если коп - отнимаем оставшееся время
+							else p.increaseLifeTime(sf::seconds(3)); // если житель - добавляем
 						}
-						It++;
+						It++; //переходим к следующему
 					}
 					else //если нет - удаляем
 					{
-
-
 						It = citizensList.erase(It);
 						// и сразу создаем нового (так же как танк)
 						int type = rand() % 3; // + выбираем тип
@@ -176,8 +171,8 @@ int main()
 							citizensList.push_back(new Citizen(pos, type, map, &guyWalkTypes[type], &guyDyingTypes[type], &guyExploding));
 					}
 				}
-				if (p.getRemainingTime() <= sf::Time::Zero || p.getLifes() <= 0)
-					isGameOver = true;
+				if (p.getRemainingTime() <= sf::Time::Zero || p.getLifes() <= 0) // если время у игрока кончилось
+					isGameOver = true; // заканчиваем игру
 			}
 
 			//рисуем карту
@@ -195,17 +190,17 @@ int main()
 			gui.draw(window);
 			accumulator += clock.restart();
 		} 
-		else
-		{
+		else // если игра закончилась
+		{ //выводим успехи игрока
 			sf::Text gameOver("Game Over", font, 50);
-			gameOver.setPosition(camera.getCenter().x - 250, camera.getCenter().y - 100);
+			gameOver.setPosition(camera.getCenter().x - 250, camera.getCenter().y - 100); 
 			sf::Text killed("Killed        \t" + std::to_string(p.getHomisides()), font, 20);
 			killed.setPosition(camera.getCenter().x - 200, camera.getCenter().y - 20 );
 			sf::Text gameTime("Game Time \t " + std::to_string((int)gameTime.asSeconds()), font, 20);
 			gameTime.setPosition(camera.getCenter().x - 200, camera.getCenter().y+20);
-			window.draw(gameOver);
-			window.draw(killed);
-			window.draw(gameTime);
+			window.draw(gameOver); // "конец игры"
+			window.draw(killed); // кол-во убитых
+			window.draw(gameTime); //время в игре
 		}
 		window.display();
 		window.clear();
@@ -215,7 +210,7 @@ int main()
 }
 
 //Установка текстур
-void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Texture& guyExploding) {
+void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyFallingTypes, sf::Texture& guyExploding) {
 
 	sf::Image image;
 	//текстуры ходьбы
@@ -236,17 +231,17 @@ void initTextures(sf::Texture* guyWalkTypes, sf::Texture* guyDyingTypes, sf::Tex
 	//текстуры смерти для житилей
 	image.loadFromFile("images/Citizens/guy1death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
-	guyDyingTypes[0].loadFromImage(image);
+	guyFallingTypes[0].loadFromImage(image);
 	image.loadFromFile("images/Citizens/guy2death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
-	guyDyingTypes[1].loadFromImage(image);
+	guyFallingTypes[1].loadFromImage(image);
 	image.loadFromFile("images/Citizens/guy3death.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
-	guyDyingTypes[2].loadFromImage(image);
+	guyFallingTypes[2].loadFromImage(image);
 	//коп (смертть)
 	image.loadFromFile("images/Citizens/copDeath.png");
 	image.createMaskFromColor(sf::Color(255, 255, 255));
-	guyDyingTypes[3].loadFromImage(image);
+	guyFallingTypes[3].loadFromImage(image);
 
 	//кровавый взрыв
 	image.loadFromFile("images/Citizens/BSS.png");

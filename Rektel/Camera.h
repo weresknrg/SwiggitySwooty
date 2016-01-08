@@ -4,8 +4,8 @@
 sf::View camera;
 
 
-auto getVisibleArea()
-{
+sf::FloatRect getVisibleArea()
+{ 
 	return sf::FloatRect(sf::Vector2f(camera.getCenter().x - camera.getSize().x / 2, camera.getCenter().y - camera.getSize().y / 2), camera.getSize());
 }
 

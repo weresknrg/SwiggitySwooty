@@ -7,37 +7,45 @@ class Citizen :
 {
 private:
 
-	bool isAlife;
-	bool isDying;
-	float speed;
-	bool isExploding;
-	float rotationAngle;
-	int direction;
-	int type;
-	sf::FloatRect rect;
+	bool isAlife; // жив ли? если нет - на удаление
+	bool isFalling; // сбит ли тачкой?
+	float speed; // скорость
+	bool isExploding; // взрывается ли кровищей
+	float rotationAngle; // угол поворота
+	int direction; // направление
+	int type; // тип горожанина (0 - 2)косметич разница, 3 - коп
+	sf::FloatRect rect; // прямоугольник (для коллизий)
 
-	sf::Time dyingTime;
-	sf::Time explodingTime;
-	sf::Texture *textureWalking;
-	sf::Texture *textureDying;
-	sf::Texture *textureBoom;
-	Animation walk;
-	Animation die;
-	Animation boom;
-	AnimatedSprite animSprite;
-	Animation *currentAnimation;
+	sf::Time dyingTime; // сколько времени длится анимация смерти
+	sf::Time explodingTime; // сколько времени разлетается кровища
+	sf::Texture *textureWalking; // спрайт лист ходьбы
+	sf::Texture *textureFalling; // спрайт лист падения
+	sf::Texture *textureBoom; // спрайт лист взрыва
+	Animation walk; // анимация ходьбы
+	Animation falling; // смерти
+	Animation boom; // взрыва
+	AnimatedSprite animSprite; // объект, воспроизводящий анимацию
+	Animation *currentAnimation; // текущая анимация
 
-	void walkingDownTheStreet(sf::Time dt);
+
+	void walkingDownTheStreet();
 	void updateAnimation(sf::Time dt);
-	void collisionWithWall();
+	bool collisionWithWall();
 
 public:
+	// обработка столкновения с игроком (прямоугольник игрока, скорость игрока, угол поворота игрока)
 	bool collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation);
-	Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *Walking, sf::Texture *die, sf::Texture *exploding);
+	// конструктор( нач позиция, тип, ссылка на карту, спрайт лист ходьбы, падения, взрыва)
+	Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *Walking, sf::Texture *fall, sf::Texture *exploding);
+	// обновление
 	void update(sf::Time dt);
+	// отрисовка
 	void draw(sf::RenderTarget &renderTarget);
+	//прямоугольник (для столкновений)
 	sf::FloatRect getRect();
+	// вернуть статус
 	bool checkIsAlife();
+	// вернуть тип
 	int getType();
 	~Citizen();
 };

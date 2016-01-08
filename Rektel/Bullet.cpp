@@ -20,10 +20,10 @@ void Bullet::draw(sf::RenderTarget & renderTarget)
 
 void Bullet::update(sf::Time dt)
 {
-	position += speedVec;
-	sprite.setPosition(position);
-	if (checkCollisionsWithWall())
-		isAlife = false;
+	position += speedVec; 
+	sprite.setPosition(position);// перемещаем пулю
+	if (checkCollisionsWithWall())// если столкнулась со стеной 
+		isAlife = false; // убиваем
 }
 
 bool Bullet::checkIsAlife()
@@ -33,12 +33,13 @@ bool Bullet::checkIsAlife()
 
 bool Bullet::checkCollisionsWithWall()
 {
-	for (int i = 0; i < mapObjects.size(); i++) {
-		if (sprite.getGlobalBounds().intersects(mapObjects[i].rect))
-			if (mapObjects[i].name == "solid")
-				return true;
+	for (int i = 0; i < mapObjects.size(); i++)  // бежим по всем объектам на карте
+	{
+		if (sprite.getGlobalBounds().intersects(mapObjects[i].rect)) //если есть пересечение
+			if (mapObjects[i].name == "solid") //и это здание
+				return true; // возвращаем true
 	}
-	return false;
+	return false; 
 }
 
 void Bullet::setBulletLife(bool isAlife)

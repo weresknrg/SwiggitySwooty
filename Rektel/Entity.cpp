@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-Entity::Entity(sf::Image &image, sf::Vector2f startPosition, sf::String Name)
+Entity::Entity(sf::Image &image, sf::Vector2f startPosition)
 {
 	image.createMaskFromColor(sf::Color(255, 255, 255));
 	texture.loadFromImage(image);

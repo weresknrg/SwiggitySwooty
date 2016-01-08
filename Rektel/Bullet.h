@@ -9,10 +9,11 @@ public:
 	void draw(sf::RenderTarget& renderTarget);
 	void update(sf::Time dt);
 	bool checkIsAlife();
-	bool checkCollisionsWithWall();
+	
 	void setBulletLife(bool isAlife);
 	sf::Sprite getSprite();
 private:
+	bool checkCollisionsWithWall();
 	float speed;
 	bool isAlife;
 };

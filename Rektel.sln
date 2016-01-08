@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rektel", "Rektel\Rektel.vcxproj", "{3BC856A4-4B65-40B3-9AF3-CEFDA1186B4D}"
 EndProject
-Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "ModelingProject1", "ModelingProject1\ModelingProject1.modelproj", "{C189383C-D8C5-47CC-8794-060FE1D18671}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,18 +25,6 @@ Global
 		{3BC856A4-4B65-40B3-9AF3-CEFDA1186B4D}.Release|x64.Build.0 = Release|x64
 		{3BC856A4-4B65-40B3-9AF3-CEFDA1186B4D}.Release|x86.ActiveCfg = Release|Win32
 		{3BC856A4-4B65-40B3-9AF3-CEFDA1186B4D}.Release|x86.Build.0 = Release|Win32
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Debug|x64.Build.0 = Debug|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Debug|x86.Build.0 = Debug|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Release|x64.ActiveCfg = Release|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Release|x64.Build.0 = Release|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Release|x86.ActiveCfg = Release|Any CPU
-		{C189383C-D8C5-47CC-8794-060FE1D18671}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

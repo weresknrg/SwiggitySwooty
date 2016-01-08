@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="left-up" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="220">
  <tileset firstgid="1" name="spriteSheet" tilewidth="32" tileheight="32" tilecount="240">
-  <image source="D:\Studiorum\git\Rektel\Rektel\images\spriteSheet2.png" width="515" height="481"/>
+  <image source=".\images\spriteSheet2.png" width="515" height="481"/>
  </tileset>
  <layer name="roadsSidewalks" width="100" height="100">
   <data>

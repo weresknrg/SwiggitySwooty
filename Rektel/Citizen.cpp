@@ -1,18 +1,21 @@
 #include "Citizen.h"
 #include "level.h"
 
-Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, sf::Texture *dying, sf::Texture *exploding)
+Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, sf::Texture *fall, sf::Texture *exploding)
 {
+	//передачса указателей на спрайт листы
 	textureWalking = walking;
-	textureDying = dying;
+	textureFalling = fall;
 	textureBoom = exploding;
-	mapObjects = map.GetObjects("solid");
+	
+	mapObjects = map.GetObjects("solid");//здания
 
-
+	//инициализация анимаций
 	walk.setSpriteSheet(*textureWalking);
-	die.setSpriteSheet(*textureDying);
+	falling.setSpriteSheet(*textureFalling);
 	boom.setSpriteSheet(*textureBoom);
-
+	// разные текстуры для разного
+	// типа горожан
 	if (type == 0)
 	{
 		walk.addFrame(sf::IntRect(0, 0, 61, 81));
@@ -20,8 +23,8 @@ Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, s
 		walk.addFrame(sf::IntRect(112, 0, 63, 80));
 		walk.addFrame(sf::IntRect(175, 13, 51, 45));
 
-		die.addFrame(sf::IntRect(0, 7, 62, 64));
-		die.addFrame(sf::IntRect(63, 0, 68, 63));
+		falling.addFrame(sf::IntRect(0, 7, 62, 64));
+		falling.addFrame(sf::IntRect(63, 0, 68, 63));
 		animSprite.setScale(0.6, 0.6);
 	}
 	if (type == 1)
@@ -31,8 +34,8 @@ Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, s
 		walk.addFrame(sf::IntRect(82, 0, 46, 60));
 		walk.addFrame(sf::IntRect(128, 16, 37, 34));
 
-		die.addFrame(sf::IntRect(0, 0, 43, 88));
-		die.addFrame(sf::IntRect(43, 9, 79, 70));
+		falling.addFrame(sf::IntRect(0, 0, 43, 88));
+		falling.addFrame(sf::IntRect(43, 9, 79, 70));
 		animSprite.setScale(0.7, 0.7);
 	}
 	if (type == 2)
@@ -42,22 +45,22 @@ Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, s
 		walk.addFrame(sf::IntRect(85, 0, 45, 60));
 		walk.addFrame(sf::IntRect(130, 17, 38, 34));
 
-		die.addFrame(sf::IntRect(0, 0, 54, 68));
-		die.addFrame(sf::IntRect(54, 0, 76, 75));
+		falling.addFrame(sf::IntRect(0, 0, 54, 68));
+		falling.addFrame(sf::IntRect(54, 0, 76, 75));
 		animSprite.setScale(0.7, 0.7);
 	}
-	if (type == 3) 
+	if (type == 3)  //коп
 	{
 		walk.addFrame(sf::IntRect(0, 0, 64, 82));
 		walk.addFrame(sf::IntRect(64, 24, 50, 45));
 		walk.addFrame(sf::IntRect(114, 0, 64, 82));
 		walk.addFrame(sf::IntRect(178, 24, 49, 45));
 
-		die.addFrame(sf::IntRect(0, 7, 62, 64));
-		die.addFrame(sf::IntRect(63, 0, 68, 63));
+		falling.addFrame(sf::IntRect(0, 7, 62, 64));
+		falling.addFrame(sf::IntRect(63, 0, 68, 63));
 		animSprite.setScale(0.6, 0.6);
 	}
-
+	//взрыв для всех общий
 	boom.addFrame(sf::IntRect(134, 3, 23, 21));
 	boom.addFrame(sf::IntRect(224, 27, 37, 33));
 	boom.addFrame(sf::IntRect(312, 21, 54, 48));
@@ -73,22 +76,30 @@ Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, s
 
 	position = pos;
 	
-	speedVec = sf::Vector2f(0, 0);
-	currentAnimation = &walk;
-	rotationAngle = 0;
-	isAlife = true;
+	//начальные значения
+	speedVec = sf::Vector2f(0, 0); // вектор скорости (х, у)
+	currentAnimation = &walk;// анимация
+	rotationAngle = 0;// угол поворота
+	isAlife = true; // живой
 
+	// продолжительность анимаций
 	dyingTime = sf::seconds(0.4);
 	explodingTime = sf::milliseconds(11 * 70);
-	direction = rand() % 4;
+
+	//скорость (длина вектора)
 	speed = 30;
+	//случайное направление (вниз вверх влево вправо)
+	direction = rand() % 4;
 }
 
 void Citizen::update(sf::Time dt) {
+	//обновляем анимацию
 	updateAnimation(dt);
-	if (!isDying) 
+	
+	if (!isFalling) // если не сбит игроком
 	{
-		walkingDownTheStreet(dt);
+		// гуляет по улице
+		walkingDownTheStreet();
 	}
 
 	position += speedVec * dt.asSeconds();
@@ -119,32 +130,37 @@ int Citizen::getType()
 }
 
 
-void Citizen::walkingDownTheStreet(sf::Time dt)
+void Citizen::walkingDownTheStreet()
 {
-	//Check collision with wall
-	collisionWithWall();
-	//rect = animSprite.getGlobalBounds();
+	if(collisionWithWall()) //если на пути стена
+	{
+		int dir = rand() % 2; //выбираем куда повернуть 
+		if (dir == 0) direction++; // в одну сторону
+		else direction--; // в другую
+		if (direction > 3) direction = 0; 
+		if (direction < 0) direction = 3;
+	}
 
 
-	if (direction == 0) //Up
+	if (direction == 0) //вверх
 	{
 		speedVec.x = 0;
 		speedVec.y = -1;
 		rotationAngle = 0;
 	}
-	if (direction == 1) //Right
+	if (direction == 1) //вправо
 	{
 		speedVec.x = 1;
 		speedVec.y = 0;
 		rotationAngle = 90;
 	}
-	if (direction == 2) //Down
+	if (direction == 2) //вниз
 	{
 		speedVec.x = 0;
 		speedVec.y = 1;
 		rotationAngle = 180;
 	}
-	if (direction == 3) //Left
+	if (direction == 3) //влнво
 	{
 		speedVec.x = -1;
 		speedVec.y = 0;
@@ -156,63 +172,61 @@ void Citizen::walkingDownTheStreet(sf::Time dt)
 
 void Citizen::updateAnimation(sf::Time dt)
 {
-	if (isExploding)
+	if (isExploding) // если взрывается
 	{
-		currentAnimation = &boom;
-		animSprite.setFrameTime(sf::milliseconds(70));
+		currentAnimation = &boom; // включаем анимацию взрыва
+		animSprite.setFrameTime(sf::milliseconds(70)); //скорость анимации
 		animSprite.setScale(1, 1);
-		explodingTime -= dt;
+		explodingTime -= dt; //обратнный отсчет
 		if (explodingTime <= sf::Time::Zero)
 		{
-			isAlife = false;
+			isAlife = false; //убиваем
 		}
 	}
-	else if (isDying)
+	else if (isFalling) // если сбит
 	{
-		currentAnimation = &die;
+		currentAnimation = &falling; // включаем анимация падения
 		animSprite.setLooped(false);
-		dyingTime -= dt;
+		dyingTime -= dt; // обратный отсчет
 		if (dyingTime <= sf::Time::Zero)
 		{
-			isExploding = true;
+			isExploding = true; // после кторого переходим к взрыву
 		}
 	}
-	else if (isAlife)
+	else
 	{
-		currentAnimation = &walk;
+		currentAnimation = &walk; // иначе анимация ходьбы
 	}
 
-	animSprite.setOrigin(40, 40);
+	animSprite.setOrigin(40, 40); // задать центр
 	animSprite.setPosition(position);
 	animSprite.setRotation(rotationAngle);
 	
-	animSprite.update(dt);
+	animSprite.update(dt);  // обновление анимации
 	animSprite.play(*currentAnimation);
 }
-
-void Citizen::collisionWithWall()
+ //  столкновени со стеной
+bool Citizen::collisionWithWall()
 {
-	for (int i = 0; i < mapObjects.size(); i++)
+	for (int i = 0; i < mapObjects.size(); i++) //пробегаем все здания на карте
 	{
-		if (mapObjects[i].rect.intersects(animSprite.getGlobalBounds()))
+		if (mapObjects[i].rect.intersects(animSprite.getGlobalBounds())) // если сть с каким то из них есть пересечение
 		{
-			int dir = rand() % 2;
-			if (dir == 0) direction++;
-			else direction--;
-			if (direction > 3) direction = 0;
-			if (direction < 0) direction = 3;
-			
+			return true; // возвращаем true
 		}
 	}
+	return false; // иначе false
 }
 
-bool Citizen::collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation) {
-	if (animSprite.getGlobalBounds().intersects(playerRect) && !isDying)
+// столкновение с игроком
+bool Citizen::collisionWithPlayer(sf::FloatRect playerRect, sf::Vector2f playerSpeedVec, float playerRotation) 
+{
+	if (animSprite.getGlobalBounds().intersects(playerRect) && !isFalling) // если игрок коснулся жителя и еще не сбит
 	{
-		rotationAngle = playerRotation;
-		speedVec.x = 50 * playerSpeedVec.x + 5;
-		speedVec.y = 50 * playerSpeedVec.y + 5;
-		isDying = true;
+		rotationAngle = playerRotation; 
+		speedVec.x = 50 * playerSpeedVec.x + 10;
+		speedVec.y = 50 * playerSpeedVec.y + 10;
+		isFalling = true; // сбиваем
 		return true;
 	}
 	return false;

@@ -9,17 +9,16 @@ class Entity
 public:
 	
 protected:
-	virtual void draw(sf::RenderTarget& renderTarget) = 0;
-	sf::Sprite sprite;
-	std::vector<Object> mapObjects;
-	float width, height;
-	sf::Vector2f speedVec;
-	sf::RectangleShape rect;
-	sf::Vector2f position;
-	sf::Texture texture;
+	virtual void draw(sf::RenderTarget& renderTarget) = 0; // виртуальная ф-ция отрисовки
+	sf::Sprite sprite; //спрайт
+	std::vector<Object> mapObjects; // массив объектов карты
+	float width, height; // ширина высота спрайта
+	sf::Vector2f speedVec; // скорость
+	sf::RectangleShape rect; // прямугольник для столкновений
+	sf::Vector2f position; //координаты на карте
+	sf::Texture texture; //текстура
 
-	sf::String name;
-	Entity(sf::Image &image, sf::Vector2f startPosition, sf::String Name);
+	Entity(sf::Image &image, sf::Vector2f startPosition);
 	Entity();
 	~Entity();
 };

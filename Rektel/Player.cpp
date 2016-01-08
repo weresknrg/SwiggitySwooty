@@ -5,21 +5,30 @@
 #include "Collision.h"
 #define SCALE 0.6
 
-Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition, sf::String Name) :Entity(image, startPosition, Name) {
+Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition) :Entity(image, startPosition) {
 	mapObjects = lev.GetObjects("solid");
-	steer = 0;
-	position = startPosition;
+	
 	sprite.setScale(SCALE, SCALE);
 	width = texture.getSize().x;
 	height = texture.getSize().y;
 	sprite.setOrigin(width / 2, height * 3 / 4);
+	//начальные значения
+	position = startPosition;
+	steer = 0;
+	speed = 0;
+	acceleration = 0;
+	engineForce = 0;
+	breakForce = 0;
+	reverce = 0;
+	
 	rect.setSize((sf::Vector2f) texture.getSize());
 	rect.setScale(sprite.getScale());
 	rect.setOrigin(sprite.getOrigin());
 	rect.setFillColor(sf::Color::Green);
-	lifes = 3;
-	homisides = 0;
-	lifeTime = sf::seconds(30);
+	
+	lifes = 6; // кол-во жизней
+	homisides = 0; 
+	lifeTime = sf::seconds(30); //время жизни
 }
 
 void Player::update(sf::Time dt)
@@ -27,37 +36,38 @@ void Player::update(sf::Time dt)
 	sprite.setPosition(rect.getPosition());
 	sprite.setRotation(rect.getRotation());
 
-	lifeTime -= dt;
-	driving(dt);
-	float forceFrict;
-	float forceResist;
-	float totalForce;
+	lifeTime -= dt; // уменьшаем время жизни
+	driving(dt); 
+	
+	float forceFrict; // сила трения колес
+	float forceResist; // сила сопротивления воздуха
+	float totalForce; //поная сила
 
-	speedVec = Pixels2Meter(speed) * sf::Vector2f(sinf(rotationAngle* 3.14159265f / 180.0f), cosf(rotationAngle * 3.14159265f / 180.0f));
-	rotationAngle += steer;
-	forceFrict = -250.5f  * speed;
+	speedVec = Pixels2Meter(speed) * sf::Vector2f(sinf(rotationAngle* 3.14159265f / 180.0f), cosf(rotationAngle * 3.14159265f / 180.0f)); // вектор скорости
+	rotationAngle += steer; //машину поворачиваем на угол
+	// считаем силы
+	forceFrict = -250.5f  * speed; 
 	forceResist = -10.3f  * sgn(speed) * speed *speed;
 
-	if (breaking) {
+	if (breaking) //если тормозим
+	{
 		totalForce = -sgn(speed) * breakForce + forceFrict + forceResist;
 	}
-	else if (reverce) {
+	else if (reverce) //если сдаем назад
+	{
 		totalForce = -backward + forceFrict + forceResist;
 	}
-	else {
+	else
+	{
 		totalForce = engineForce + forceFrict + forceResist;
 	}
+	acceleration = totalForce / mass; //ускорение
+	collisionWithMap(); // столкновеня с картой
 
-	std::cout << lifeTime.asSeconds()<< std::endl;
-	//std::cout << "acc " << acceleration <<"\t speed \t "<< speed <<"\t frc \t"<< totalForce <<std::endl;
-
-	acceleration = totalForce / mass;
-	collisionWithMap();
-
-	speed += acceleration * dt.asSeconds();
+	speed += acceleration * dt.asSeconds(); //скорость
 	position.x += Meter2Pixels(speedVec.x);
 	position.y -= Meter2Pixels(speedVec.y);
-	rect.setPosition(position);
+	rect.setPosition(position); // перемещаем машину
 	rect.setRotation(rotationAngle);
 }
 
@@ -83,27 +93,28 @@ void Player::driving(sf::Time dt)  //Управление
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) //Тормоз
 	{
 		breakForce += 2000 * dt.asSeconds();
-		breaking = 1;
+		breaking = true;
 	}
 	else {
-		breaking = 0;
+		breaking = false;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 		backward += 300 * dt.asSeconds();
-		reverce = 1;
+		reverce = true;
 		if (speed < -3) {
 			speed = -3;
 		}
 	}
 	else {
-		reverce = 0;
+		reverce = false;
 	}
 
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //Влево
 	{
-		steer -= 0.05 / dt.asSeconds() * 1 / sqrt(abs(speed));
+		if(speed > 0.5)
+			steer -= 0.05 / dt.asSeconds();
 		if (steer < -1.0)
 		{
 			steer = -1.0;
@@ -111,7 +122,8 @@ void Player::driving(sf::Time dt)  //Управление
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) //Вправо
 	{
-		steer += 0.05 / dt.asSeconds() * 1 / sqrt(abs(speed));
+		if(speed > 0.5)
+			steer += 0.05 / dt.asSeconds();
 		if (steer > 1.0)
 		{
 			steer = 1.0;
@@ -132,11 +144,11 @@ void Player::collisionWithMap() // Обраблтка столкновений с объектами на карте
 	for (std::vector<Object>::iterator mapObjectIter = mapObjects.begin(); mapObjectIter != mapObjects.end(); mapObjectIter++) {
 		if (Collision::checkCollision(sprite, mapObjects[counter].rect)) 
 		{
-			if (mapObjects[counter].name == "solid")
+			if (mapObjects[counter].name == "solid") // если столкнулись
 			{
-				// вместо этого, сюда написать что нибуть нормальное
+				// отскакиваем от стены
 				speedVec = -speedVec;
-				speed = -0.5 * speed;
+				speed = -0.7 * speed;
 				lifes--;
 			}
 		}
@@ -144,8 +156,8 @@ void Player::collisionWithMap() // Обраблтка столкновений с объектами на карте
 	}
 }
 
-template <typename T> int Player::sgn(T val) {
-	return (T(0) < val) - (val < T(0));
+int Player::sgn(float val) {
+	return (0.f < val) - (val < 0.f);
 }
 
 const float Player::Meter2Pixels(float meters)

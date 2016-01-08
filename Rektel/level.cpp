@@ -21,7 +21,7 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 	TiXmlDocument levelFile(filename.c_str());//загружаем файл в TiXmlDocument
 
 											  // загружаем XML-карту
-	if (!levelFile.LoadFile())//если не удалось загрузить карту
+	if (!levelFile.LoadFile()) //если не удалось загрузить карту
 	{
 		std::cout << "Loading level \"" << filename << "\" failed." << std::endl;//выдаем ошибку
 		return false;
@@ -262,6 +262,14 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 		std::cout << "No object layers found..." << std::endl;
 	}
 
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].name == "solid") 
+		{
+			buildings.push_back(Building(objects[i].rect));
+		}
+	}
+
 	return true;
 }
 
@@ -296,3 +304,4 @@ sf::Vector2i Level::GetTileSize()
 	return sf::Vector2i(tileWidth, tileHeight);
 }
 
+/////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
