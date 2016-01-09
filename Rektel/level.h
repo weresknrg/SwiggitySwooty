@@ -35,28 +35,29 @@ public:
 	Object GetObject(std::string name);
 	std::vector<Object> GetObjects(std::string name);//выдаем объект в наш уровень
 	std::vector<Object> GetAllObjects();//выдаем все объекты в наш уровень
+	void drawBuildings(sf::Vector2f cameraCenter, sf::RenderTarget &window);
 	virtual void Level::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-			// apply the transform
+		// apply the transform
 		states.transform *= getTransform();
-
 		// apply the tileset texture
 		states.texture = &tilesetImage;
-
-			// draw the vertex array
+		// draw the vertex array
 		target.draw(layers[0].m_vertices, states);
-		}//рисуем в окно
+	}//рисуем в окно
 		
-		sf::Vector2i GetTileSize();//получаем размер тайла
+	sf::Vector2i GetTileSize();//получаем размер тайла
 
-	private:
-		int width, height, tileWidth, tileHeight;//в tmx файле width height в начале,затем размер тайла
-		int firstTileID;//получаем айди первого тайла
-		sf::Rect<float> drawingBounds;//размер части карты которую рисуем
-		sf::Texture tilesetImage;//текстура карты
-		std::vector<Object> objects;//массив типа Объекты, который мы создали
-		std::vector<Layer> layers;
-	};
+private:
+	int width, height, tileWidth, tileHeight;//в tmx файле width height в начале,затем размер тайла
+	int firstTileID;//получаем айди первого тайла
+	sf::Rect<float> drawingBounds;//размер части карты которую рисуем
+	sf::Texture tilesetImage;//текстура карты
+	std::vector<Object> objects;//массив типа Объекты, который мы создали
+	std::vector<Layer> layers;
+	std::vector<sf::FloatRect> buildings;
+	
+	int sgn(float val);
+};
 
 	///////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-

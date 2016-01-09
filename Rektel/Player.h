@@ -9,7 +9,7 @@ private:
 
 	float		speed; // скорость
 	float		steer; // управление
-	const float	mass = 1695; // масса
+	float		mass; // масса
 	float		engineForce; // усилие двигателя 
 	float		backward; // задний ход
 	float		breakForce; // тормоз
@@ -19,7 +19,7 @@ private:
 
 	float		rotationAngle; //угол поворота
 	float		acceleration; //ускорение
-	const float PixelsPerMeter = 18; // пикселей на метр
+	float		PixelsPerMeter; // пикселей на метр
 	sf::Time lifeTime; //оставшееся время
 	
 	void driving(sf::Time dt); //вождение

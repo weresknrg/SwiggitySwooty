@@ -7,7 +7,9 @@
 
 Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition) :Entity(image, startPosition) {
 	mapObjects = lev.GetObjects("solid");
-	
+	std::vector<Object> temp = lev.GetObjects("building");
+	mapObjects.insert(mapObjects.end(), temp.begin(), temp.end());
+
 	sprite.setScale(SCALE, SCALE);
 	width = texture.getSize().x;
 	height = texture.getSize().y;
@@ -15,11 +17,14 @@ Player::Player(sf::Image &image, Level &lev, sf::Vector2f startPosition) :Entity
 	//начальные значени€
 	position = startPosition;
 	steer = 0;
+	backward = 0;
 	speed = 0;
 	acceleration = 0;
 	engineForce = 0;
 	breakForce = 0;
 	reverce = 0;
+	mass = 1700;
+	PixelsPerMeter = 18;
 	
 	rect.setSize((sf::Vector2f) texture.getSize());
 	rect.setScale(sprite.getScale());
@@ -99,7 +104,8 @@ void Player::driving(sf::Time dt)  //”правление
 		breaking = false;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) 
+	{
 		backward += 300 * dt.asSeconds();
 		reverce = true;
 		if (speed < -3) {
@@ -113,7 +119,7 @@ void Player::driving(sf::Time dt)  //”правление
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //¬лево
 	{
-		if(speed > 0.5)
+		if(speed > 0.5 || speed < -0.5)
 			steer -= 0.05 / dt.asSeconds();
 		if (steer < -1.0)
 		{
@@ -122,7 +128,7 @@ void Player::driving(sf::Time dt)  //”правление
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) //¬право
 	{
-		if(speed > 0.5)
+		if(speed > 0.5 || speed < -0.5)
 			steer += 0.05 / dt.asSeconds();
 		if (steer > 1.0)
 		{
@@ -144,13 +150,10 @@ void Player::collisionWithMap() // ќбраблтка столкновений с объектами на карте
 	for (std::vector<Object>::iterator mapObjectIter = mapObjects.begin(); mapObjectIter != mapObjects.end(); mapObjectIter++) {
 		if (Collision::checkCollision(sprite, mapObjects[counter].rect)) 
 		{
-			if (mapObjects[counter].name == "solid") // если столкнулись
-			{
-				// отскакиваем от стены
-				speedVec = -speedVec;
-				speed = -0.7 * speed;
-				lifes--;
-			}
+			// отскакиваем от стены
+			speedVec = -speedVec;
+			speed = -0.7 * speed;
+			lifes--;
 		}
 		counter++;
 	}

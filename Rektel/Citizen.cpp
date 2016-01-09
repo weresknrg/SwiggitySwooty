@@ -8,8 +8,10 @@ Citizen::Citizen(sf::Vector2f pos, int type, Level &map, sf::Texture *walking, s
 	textureFalling = fall;
 	textureBoom = exploding;
 	
-	mapObjects = map.GetObjects("solid");//здания
-
+	mapObjects = map.GetObjects("solid"); //здания
+	std::vector<Object> temp = map.GetObjects("building");
+	mapObjects.insert(mapObjects.end(), temp.begin(), temp.end());
+	
 	//инициализация анимаций
 	walk.setSpriteSheet(*textureWalking);
 	falling.setSpriteSheet(*textureFalling);

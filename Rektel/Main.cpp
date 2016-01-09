@@ -177,6 +177,7 @@ int main()
 
 			//рисуем карту
 			window.draw(map);
+			
 			//игрока
 			p.draw(window);
 			//жителей
@@ -187,7 +188,9 @@ int main()
 			//танк если существует и его пули
 			if (tank != 0)
 				tank->draw(window);
+			map.drawBuildings(camera.getCenter(), window);
 			gui.draw(window);
+			
 			accumulator += clock.restart();
 		} 
 		else // если игра закончилась

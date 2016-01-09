@@ -36,7 +36,7 @@ bool Bullet::checkCollisionsWithWall()
 	for (int i = 0; i < mapObjects.size(); i++)  // бежим по всем объектам на карте
 	{
 		if (sprite.getGlobalBounds().intersects(mapObjects[i].rect)) //если есть пересечение
-			if (mapObjects[i].name == "solid") //и это здание
+			if (mapObjects[i].name == "solid" || mapObjects[i].name == "building") //и это здание
 				return true; // возвращаем true
 	}
 	return false; 

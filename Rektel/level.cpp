@@ -264,10 +264,8 @@ bool Level::LoadFromFile(std::string filename)//двоеточия-обращение к методам кл
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-		if (objects[i].name == "solid") 
-		{
-			buildings.push_back(Building(objects[i].rect));
-		}
+		if (objects[i].name == "building")
+			buildings.push_back(objects[i].rect);
 	}
 
 	return true;
@@ -303,5 +301,100 @@ sf::Vector2i Level::GetTileSize()
 {
 	return sf::Vector2i(tileWidth, tileHeight);
 }
+
+void Level::drawBuildings(sf::Vector2f cameraCenter, sf::RenderTarget &window)
+{
+	for (int i = 0; i < buildings.size(); i++)
+	{
+		sf::Vector2f distance(cameraCenter.x - buildings[i].left - buildings[i].width / 2, cameraCenter.y - buildings[i].top - buildings[i].height / 2);
+		sf::Vector2f buildShift;
+		buildShift.x = 1.5 * sqrt(abs(distance.x)) * sgn(distance.x);
+		buildShift.y = 1.5 * sqrt(abs(distance.y)) * sgn(distance.y);
+
+		sf::VertexArray edgeRight(sf::Quads, 4);
+
+		edgeRight[0].position = sf::Vector2f(buildings[i].left + buildings[i].width - buildShift.x, buildings[i].top - buildShift.y);
+		edgeRight[1].position = sf::Vector2f(buildings[i].left + buildings[i].width - buildShift.x, buildings[i].top + buildings[i].height - buildShift.y);
+		edgeRight[3].position = sf::Vector2f(buildings[i].left + buildings[i].width, buildings[i].top);
+		edgeRight[2].position = sf::Vector2f(buildings[i].left + buildings[i].width, buildings[i].top + buildings[i].height);
+
+		edgeRight[0].color = sf::Color(75,58,42);
+		edgeRight[1].color = edgeRight[2].color = edgeRight[3].color = edgeRight[0].color;
+
+
+		sf::VertexArray edgeDown(sf::Quads, 4);
+
+		edgeDown[0].position = sf::Vector2f(buildings[i].left, buildings[i].top + buildings[i].height);
+		edgeDown[1].position = sf::Vector2f(buildings[i].left - buildShift.x, buildings[i].top + buildings[i].height - buildShift.y);
+		edgeDown[2].position = sf::Vector2f(buildings[i].left + buildings[i].width - buildShift.x, buildings[i].top + buildings[i].height - buildShift.y);
+		edgeDown[3].position = sf::Vector2f(buildings[i].left + buildings[i].width, buildings[i].top + buildings[i].height);
+
+		edgeDown[0].color = sf::Color(26, 20, 14);
+		edgeDown[1].color = edgeDown[2].color = edgeDown[3].color = edgeDown[0].color;
+
+		sf::VertexArray edgeLeft(sf::Quads, 4);
+
+		edgeLeft[0].position = sf::Vector2f(buildings[i].left, buildings[i].top + buildings[i].height);
+		edgeLeft[1].position = sf::Vector2f(buildings[i].left - buildShift.x, buildings[i].top + buildings[i].height - buildShift.y);
+		edgeLeft[2].position = sf::Vector2f(buildings[i].left - buildShift.x, buildings[i].top - buildShift.y);
+		edgeLeft[3].position = sf::Vector2f(buildings[i].left, buildings[i].top);
+
+		edgeLeft[0].color = sf::Color(20, 7, 5);
+		edgeLeft[1].color = edgeLeft[2].color = edgeLeft[3].color = edgeLeft[0].color;
+
+		sf::VertexArray edgeUp(sf::Quads, 4);
+
+		edgeUp[0].position = sf::Vector2f(buildings[i].left, buildings[i].top);
+		edgeUp[1].position = sf::Vector2f(buildings[i].left - buildShift.x, buildings[i].top - buildShift.y);
+		edgeUp[2].position = sf::Vector2f(buildings[i].left + buildings[i].width - buildShift.x, buildings[i].top - buildShift.y);
+		edgeUp[3].position = sf::Vector2f(buildings[i].left + buildings[i].width, buildings[i].top);
+
+		edgeUp[0].color = sf::Color(59, 45, 33);;
+		edgeUp[1].color = edgeUp[2].color = edgeUp[3].color = edgeUp[0].color;
+
+		sf::VertexArray edgeTop(sf::Quads, 4);
+
+		edgeTop[0].position = sf::Vector2f(buildings[i].left - buildShift.x, buildings[i].top + buildings[i].height - buildShift.y);
+		edgeTop[1].position = sf::Vector2f(buildings[i].left - buildShift.x, buildings[i].top - buildShift.y);
+		edgeTop[2].position = sf::Vector2f(buildings[i].left + buildings[i].width - buildShift.x, buildings[i].top - buildShift.y);
+		edgeTop[3].position = sf::Vector2f(buildings[i].left + buildings[i].width - buildShift.x, buildings[i].top + buildings[i].height - buildShift.y);
+
+		edgeTop[0].color = sf::Color(43, 33, 24);
+		edgeTop[1].color = edgeTop[2].color = edgeTop[3].color = edgeTop[0].color;
+
+		sf::VertexArray edgeTopCenter(sf::Quads, 4);
+
+		edgeTopCenter[0].position = sf::Vector2f(buildings[i].left + 5 - buildShift.x, buildings[i].top + buildings[i].height - 5 - buildShift.y);
+		edgeTopCenter[1].position = sf::Vector2f(buildings[i].left + 5 - buildShift.x, buildings[i].top + 5 - buildShift.y);
+		edgeTopCenter[2].position = sf::Vector2f(buildings[i].left - 5 + buildings[i].width - buildShift.x, buildings[i].top + 5 - buildShift.y);
+		edgeTopCenter[3].position = sf::Vector2f(buildings[i].left - 5 + buildings[i].width - buildShift.x, buildings[i].top - 5 + buildings[i].height - buildShift.y);
+
+		edgeTopCenter[0].color = sf::Color(90, 85, 80);
+		edgeTopCenter[1].color = edgeTopCenter[2].color = edgeTopCenter[3].color = edgeTopCenter[0].color;
+
+		if (distance.y > 0) {
+			window.draw(edgeUp);
+			window.draw(edgeRight);
+			window.draw(edgeLeft);
+			window.draw(edgeDown);
+			window.draw(edgeTop);
+			window.draw(edgeTopCenter);
+		}
+		else
+		{
+			window.draw(edgeDown);
+			window.draw(edgeRight);
+			window.draw(edgeLeft);
+			window.draw(edgeUp);
+			window.draw(edgeTop);
+			window.draw(edgeTopCenter);
+		}
+	}
+}
+
+int Level::sgn(float val) {
+	return (0.f < val) - (val < 0.f);
+}
+
 
 /////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
